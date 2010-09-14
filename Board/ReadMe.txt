@@ -1,4 +1,4 @@
-Elsidi (v2)
+Elsidi (v6)
 ========================================================================
 
 
@@ -15,30 +15,18 @@ Hole diameter (corners) ......: 4.2mm
 Parts
 ------------------------------------------------------------------------
 
-1N4007                  7   D1 D2 D3 D4         Rectifier bridge
-                            D5 D6               Capacitance protection
-                            D7                  Reverse flow protection
-7805                    1   IC4
-7812                    1   IC3
-C 330nF                 4   C1 C2 C3 C4         Ripple rejection
-CONN. 2pin              1   PWR25V              Power
-CONN. 2pin 2.54 M       1   JP1                 Jumper (12V input)
-CONN. 2x2pin 2.54 M     1   JP2                 Jumper (MCLR source)
-CONN. 4pin pol          1   PWR5V               Power
-CONN. 8pin pol          1   CN2                 RS-232
-CONN. 2x10pin           1   LCD1                Standard (20x4) and dual
+CONN. 2pin 2.54 M       1   JP1                 Jumper (MCLR)
+CONN. 4pin pol          1   CN1                 Power
+CONN. 2pin pol          1   CN2                 Data
+CONN. 2x10pin           1   CN3                 Standard (20x4) and dual
                                                 (40x4) LCD.
-E 1uF                   4   E1 E2 E3 E4         MAX232 electrolyts
-E 10uF 35V              1   E5                  Input smoothing
+E 10uF 35V              1   E1                  Input smoothing
 LED 3mm red             1   LED                 Power indicator
-MAX232                  1   IC2
 PIC16F628               1   IC1
 R 330                   1   R1                  LED
-R 10K                   1   R2                  Pull-up
+R 10K                   3   R2 R3 R4            Pull-up
 R TRIM 10K, small       1   POT1                Contrast
 R TRIM 10K, small       1   POT2                Backlight
-
-//BC639                 1   T1                  Circuit switch
 
 
 
@@ -46,8 +34,6 @@ Ratings
 ------------------------------------------------------------------------
 
 Input ........................: 5V / 800mA
-                             or 12V-25V / 1A
-
 Output (LCD) .................: 5V / 500mA (max)
 
 
@@ -55,8 +41,16 @@ Output (LCD) .................: 5V / 500mA (max)
 Known issues
 ------------------------------------------------------------------------
 
-- BUG: RA4 needs to be connected to power through R 10K.
 - BUG: Power connector should have slightly bigger holes.
+- COMPATIBILITY: In order to maintain compatibility with r3 source code
+  RB0 is connected to VDD.
+
+
+
+Changes (from v3)
+------------------------------------------------------------------------
+
+- BUGFIX: RA4 has pull-up resistor.
 
 
 
@@ -113,42 +107,9 @@ Pinout:
 
 
 
-Power supply
-------------------------------------------------------------------------
-
-Only 5V voltage is needed. Higher voltage (12V-25V) should be connected
-through two-stage linear voltage regulator. Since voltage needs to be at
-least cca 3V higher than output, when 12V is supplied, JP1 should be
-installed to bypass first stage of voltage regulator. No input or
-intermediate electrolyts are provided and 10uF should be enough to
-stabilize things enough for normal operation. Because of this two-stage
-regulation no cooling should be required.
-
-
-
 Jumpers
 ------------------------------------------------------------------------
 
 JP1
-If this jumper is installed, input voltage is taken directly to second
-stage of regulator. It needs to be installed when voltage is lower than
-14V.
-
-JP2
-This is two part jumper - either top or bottom side should be installed.
-When top side is installed, ~MCLR is keept constantly active via power
-line. If bottom is installed, MCLR is controlled via DTR line. PIC will
-behave eraticaly if no jumper is installed!
-
-
-
-Silicon errata
-------------------------------------------------------------------------
-
-- Missing pull-up resistor:
-    RA4 line is missing pull-up resistor. This can be resolved by
-    connecting 10K resistor between +5V and RA4.
-- GND connection is disconnected:
-    GND is not brought to last of bridge diodes. This can be resolved by
-    making connection between GND pin on connector and negative side of
-    bottom bridge diode.
+~MCLR is keept constantly active via power line. If it is shorted to GND
+PIC will reset.
