@@ -1,0 +1,62 @@
+Lcd232 interface
+
+Hardware interface
+------------------
+Four wires are used - RXD, TXD, CTS and GND. All data is sent in ASCII
+at 9600 baud, 1 stop bit and no parity. Although DTR and RTS lines are
+not used, for compatibility with future versions one must make them
+active before anything is sent to device!
+
+Reserved characters
+-------------------
+Reserved characters are in ASCII range 0x08-0x0F (8-15 decimal). This
+range was selected since only CGRAM characters are here and they can be
+selected within 0x00-0x07 range. Here is meaning of characters:
+    0x08 BS   Reserved for future use.
+    0x09 HT   Reserved for future use.
+    0x0A LF   Executes content of buffer.
+    0x0B VT   Reserved for future use.
+    0x0C FF   Reserved for future use.
+    0x0D CR   Reserved for future use.
+    0x0E SO   Activates LCD instruction mode for next character.
+    0x0F SI   Next character is to be taken as literal - not yet
+              implemented.
+
+Default mode
+------------
+All characters received are saved in buffer without echoing to computer.
+To temporary enter LCD instruction mode for next character SO has to be
+used. When LF is detected, execution of buffer is triggered. After
+execution is done LF is sent back to computer, state returns to text
+mode and buffer is ready to receive new characters. If buffer size
+(208 bytes) is exceeded all further characters except LF are ignored.
+
+Execution (LF)
+--------------
+Buffer is executed when LF is detected. During execution no further
+input is received. When execution is done LF will be sent back to
+computer.
+
+LCD instruction mode (SO)
+-------------------------
+When in LCD instruction mode received character is saved exactly as
+received. Reserved characters can also be used in this mode. After
+character is received parser returns in text mode.
+
+Literal character (SI)
+----------------------
+Character after this one will be taken as literal and sent to LCD module
+as text. It needs to be used for sending characters in reserved range
+(0x08-0x0F).
+
+LCD startup sequence
+--------------------
+Startup sequence is executed each time hardware is restarted. It is
+defined within device's EEPROM as normal serial line characters and it
+ends with LF. No output will be generated after this execution. One can
+check whether startup is done by checking CTS line.
+
+Clear To Send (CTS)
+-------------------
+Line is high when module is ready to receive commands from computer.
+During execution and startup phase, CTS is down.
