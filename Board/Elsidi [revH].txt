@@ -17,14 +17,14 @@ BOARD
 PARTS                              
 
    o  C1                      Required by FT232RL datasheet.
-      -  C 10nF
+      -  C 10nF                                                         264-4371
 
    o  C2                      Required by FT232RL datasheet (decoupling).
-      -  C 100nF
+      -  C 100nF                                                        264-4416
 
    o  C3                      Required by FT232RL datasheet (3V3 decoupling).
-      -  C 100nF
-      
+      -  C 100nF                                                        264-4416
+
    o  C4-C5                   Filter capacitor, 555.
       -  C 100nF
 
