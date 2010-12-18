@@ -1,12 +1,12 @@
                                  Elsidi
-                                  revG
+                                  revH
 
 
 
 RATINGS
 
-   o  Input voltage ........: 12V
-   o  Input current (max)...: 1A
+   o  Input voltage ........: 5 V
+   o  Input current (max)...: 600 mA
 
 
 BOARD
@@ -25,38 +25,32 @@ PARTS
    o  C3                      Required by FT232RL datasheet (3V3 decoupling).
       -  C 100nF                                                        264-4416
 
-   o  C4-C5                   Filter capacitor, 555.
+   o  C4                      Required by FT232RL datasheet (bulk).
+      -  E 10uF /25V
+
+   o  C5                      Output smoothing
+      -  E 10uF /25V
+
+   o  C6 C7                   Filter capacitor, 555.
       -  C 100nF
 
-   o  C6                      555.
+   o  C8                      555.
       -  C 10nF
 
-   o  CON1                    USB B
-
-   o  CON2                    TTL USART [+5V GND RXD TXD]
-      -  KK 
-
-   o  CON3                    Character LCD
-      -  Molex 2.54mm KK Header (8-way)
-      -  Molex 2.54mm KK Header (8-way)
-
-   o  D1                      Reverse protection.
-      -  1N4007
+   o  C9                      Low-pass filter                           t = RC;  100 * (1 / Freq) ? t 
+      -  E 1000uF /25V   (real value is 700uF)                          E7 = 100 * (1 / Freq) / R5        (*1000000 for uF)
+      
+   o  D1                      Activity (TX/RX) indicator.
+      -  LED, Orange, 2.2V, 20mA, 150mcd, 0805
 
    o  D2 D3                   555 charge/discarge.
       -  1N5158
 
-   o  E1                      Required by FT232RL datasheet (bulk).
-      -  E 10uF /25V
+   o  J1                      USB B
+      -  USB-B
 
-   o  E2                      Output smoothing
-      -  E 10uF /25V
-
-   o  E3                      Low-pass filter                           t = RC;  100 * (1 / Freq) ? t 
-      -  E 1000uF /25V   (real value is 700uF)                          E7 = 100 * (1 / Freq) / R5        (*1000000 for uF)
-
-   o  IC1                     Linear voltage converter
-      -  L7805CV
+   o  IC1                     USB to serial
+      -  FT232RL, SSOP-28
 
    o  IC2
       -  PIC16F628-04
@@ -64,13 +58,20 @@ PARTS
    o  IC3
       -  LM555
 
-   o  LED1                    Activity (TX/RX) indicator.
-      -  3mm red
+   o  MOSFET1
+      -  IRF540
+      
+   o  P1                      TTL USART [+5V GND RXD TXD]
+      -  KK 
+
+   o  P2                      Character LCD
+      -  Molex 2.54mm KK Header (8-way)
+      -  Molex 2.54mm KK Header (8-way)
 
    o  R1                      LED.
-      -  330
+      -  330R, 1/8W, 0805
 
-   o  R2                      Pull-up for RA4      
+   o  R2                      Pull-up for RA4
       -  10K
 
    o  R3
@@ -79,14 +80,11 @@ PARTS
    o  R4                      Backlight protection / low pass filter
       -  10 /3W
 
-   o  RT1                     Contrast
-      -  10K
+   o  R5                      Contrast
+      -  0-10K
 
-   o  RT2                     Backlight duty cycle and frequency        Freq = 1.44 / (RT2 * C7) = 1.44 / (1000 * 0.0000001) = 14.4 kHz  
-      -  1K
-
-   o  T1
-      -  IRF540
+   o  R6                      Backlight duty cycle and frequency        Freq = 1.44 / (RT2 * C7) = 1.44 / (1000 * 0.0000001) = 14.4 kHz  
+      -  0-1K
 
 CASE
 
