@@ -6,85 +6,44 @@
 RATINGS
 
    o  Input voltage ........: 5 V
-   o  Input current (max)...: 600 mA
+   o  Input current (max)...: 500 mA
 
 
 BOARD
 
-   o  Board size ...........: 65.00 x 72.00 mm
+   o  Board size ...........: 42.50 x 72.00 mm
 
 
 PARTS                              
 
-   o  C1                      Required by FT232RL datasheet.
-      -  C 10nF                                                         264-4371
+   o  C1                      10nF, 50V, X7R, 0805                      Required by FT232RL datasheet
+   o  C2 C3                   100nF, 50V, X7R, 0805                     Required by FT232RL datasheet (decoupling, 3V3 decoupling)
+   o  C4                      E 10uF /25V                               Required by FT232RL datasheet (bulk)
+   o  C5                      E 10uF /25V                               Output smoothing
+   o  C6 C7                   100nF, 50V, X7R, radial                   Filter capacitor, 555
+   o  C8                      10nF                                      555
+   o  C9                      E 1000uF /25V   (real value is 700uF)     Low-pass filter  :  t = RC;  100 * (1 / Freq) = t  :  C9 = 100 * (1 / Freq) / R6 (*1000000 for uF)
 
-   o  C2                      Required by FT232RL datasheet (decoupling).
-      -  C 100nF                                                        264-4416
-
-   o  C3                      Required by FT232RL datasheet (3V3 decoupling).
-      -  C 100nF                                                        264-4416
-
-   o  C4                      Required by FT232RL datasheet (bulk).
-      -  E 10uF /25V
-
-   o  C5                      Output smoothing
-      -  E 10uF /25V
-
-   o  C6 C7                   Filter capacitor, 555.
-      -  C 100nF
-
-   o  C8                      555.
-      -  C 10nF
-
-   o  C9                      Low-pass filter                           t = RC;  100 * (1 / Freq) ? t 
-      -  E 1000uF /25V   (real value is 700uF)                          E7 = 100 * (1 / Freq) / R5        (*1000000 for uF)
-      
-   o  D1                      Activity (TX/RX) indicator.
-      -  LED, Orange, 2.2V, 20mA, 150mcd, 0805
-
-   o  D2 D3                   555 charge/discarge.
-      -  1N5158
+   o  D1                      LED, orange, 2.2V, 20mA, 150mcd, 0805     Activity (TX/RX) indicator
+   o  D2 D3                   1N5819                                    555 charge/discarge
 
    o  J1                      USB B
-      -  USB-B
 
-   o  IC1                     USB to serial
-      -  FT232RL, SSOP-28
-
-   o  IC2
-      -  PIC16F628-04
-
-   o  IC3
-      -  LM555
-
-   o  MOSFET1
-      -  IRF540
+   o  IC1                     FT232RL, SSOP-28                          USB to serial
+   o  IC2                     PIC16F628, 4MHz
+   o  IC3                     LM555
       
-   o  P1                      TTL USART [+5V GND RXD TXD]
-      -  KK 
+   o  P1                      KK6373, header, Molex, 4M                 TTL USART [+5V GND RXD TXD]
+   o  P2                      KK6373, header, Molex, 8M                 Character LCD
 
-   o  P2                      Character LCD
-      -  Molex 2.54mm KK Header (8-way)
-      -  Molex 2.54mm KK Header (8-way)
+   o  Q1                      IRF540
 
-   o  R1                      LED.
-      -  330R, 1/8W, 0805
+   o  R1                      330R, 1/8W, 0805                          LED
+   o  R2 R3                   10K, 1/4W, axial                          Pull-up for RA4, 555
+   o  R4                      10R, 2.5W, axial                          Backlight protection / low pass filter
+   o  R5                      10K, trimmer, PT-10 LV10                  Contrast
+   o  R6                      1K, trimmer, PT-10 LV10                   Backlight duty cycle and frequency  :  Freq = 1.44 / (RT2 * C7) = 1.44 / (1000 * 0.0000001) = 14.4 kHz  
 
-   o  R2                      Pull-up for RA4
-      -  10K
-
-   o  R3
-      -  10K
-
-   o  R4                      Backlight protection / low pass filter
-      -  10 /3W
-
-   o  R5                      Contrast
-      -  0-10K
-
-   o  R6                      Backlight duty cycle and frequency        Freq = 1.44 / (RT2 * C7) = 1.44 / (1000 * 0.0000001) = 14.4 kHz  
-      -  0-1K
 
 CASE
 
