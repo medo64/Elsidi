@@ -28,21 +28,20 @@ PARTS
    o  D2 D3                   1N5819                                    555 charge/discarge
 
    o  J1                      USB B
+   o  J2                      KK100 4M                                  TTL USART [+5V GND RXD TXD]
+   o  J3                      KK100 16M                                 Character LCD
 
-   o  U1                      FT232RL, SSOP-28                          USB to serial
-   o  U2                      PIC16F628, 4MHz
-   o  U3                      LM555
-
-   o  P1                      KK100 4M                                  TTL USART [+5V GND RXD TXD]
-   o  P2                      KK100 8M                                  Character LCD
-
-   o  T1                      IRF540
+   o  Q1                      IRF540
 
    o  R1                      330R, 1/8W, 0805                          LED
    o  R2 R3                   10K, 1/4W, axial                          Pull-up for RA4, 555
    o  R4                      10R, 2.5W, axial                          Backlight protection / low pass filter
-   o  VR1                     10K, trimmer, PT-10 LV10                  Contrast
-   o  VR2                     1K, trimmer, PT-10 LV10                   Backlight duty cycle and frequency  :  Freq = 1.44 / (RT2 * C7) = 1.44 / (1000 * 0.0000001) = 14.4 kHz  
+   o  R5                      10K, trimmer, PT-10 LV10                  Contrast
+   o  R6                      1K, trimmer, PT-10 LV10                   Backlight duty cycle and frequency  :  Freq = 1.44 / (RT2 * C7) = 1.44 / (1000 * 0.0000001) = 14.4 kHz  
+
+   o  U1                      FT232RL, SSOP-28                          USB to serial
+   o  U2                      PIC16F628, 4MHz
+   o  U3                      LM555
 
 
 CASE
