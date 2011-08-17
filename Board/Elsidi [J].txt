@@ -10,7 +10,7 @@ RATINGS
 
 BOARD
 
-  o Board size ...........: 42.50 x 72.00 mm
+  o Board size ...........: 42.50 x 72.00 mm (4.74 sqin)
 
 
 PARTS                              
