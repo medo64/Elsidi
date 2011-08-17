@@ -32,7 +32,8 @@ PARTS
     - C8                                7805
 
   o D: ES1D-E3 (SMA)
-    - D1                                LM317 reverse protection
+    - D1                                protects 7805 from LM317 and USB
+    - D2                                protects USB 7805
 
   o J: USB B, horizontal
     - J1                                USB
@@ -102,7 +103,7 @@ EXPLANATIONS
 
   o This board supports RS-232 connection with separate power supply and USB
     connection. However these are NOT SUPPORTED AT THE SAME TIME.
-     
+
   o Backlight intensity is controled via voltage regulator. Value is:   
       Vout = 1.25V * (1 + R8 / R4) + Iadj * R8
 
