@@ -43,6 +43,9 @@ PARTS
     - D4                                DC-to-DC
     - D5                                protects LM317
 
+  o FB:  Ferrite bead 32R, .06R 600mA (0805)
+    - FB1                               FT232RL
+
   o J: USB B, horizontal
     - J1                                USB
 
@@ -52,11 +55,8 @@ PARTS
   o J: MSTBA 3w, 5.08 horizontal
     - J3                                RS-232 input
     
-  o L:  Ferrite bead 32R, .06R 600mA (0805)
-    - L1                                FT232RL
-
   o L: 220uH, .21R 1.4A (r13x15)
-    - L2                                DC-to-DC converter
+    - L1                                DC-to-DC converter
     
   o LED: Orange 150mcd, 2.2V 20mA (0805)
     - LED1                              RX/TX
