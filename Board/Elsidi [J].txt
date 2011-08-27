@@ -25,15 +25,23 @@ PARTS
 
   o C: 10uF 6V3, tantalum (0805)
     - C3                                FT232
-    - C9                                7805
     - C11                               317
 
   o C: 1uF 35V, tantalum (0805)
-    - C8                                7805
+    - C8                                DC-to-DC input
+
+  o C: 470uF 16V, aluminum (r10x12)
+    - C12                               DC-to-DC output
+
+  o C: 470pF 50V, X7R (0805)
+    - C9                                DC-to-DC
 
   o D: ES1D-E3 (SMA)
     - D1                                protects 7805 from LM317 and USB
     - D2                                protects USB 7805
+    - D3                                reverse polarity protection
+    - D4                                DC-to-DC
+    - D5                                protects LM317
 
   o J: USB B, horizontal
     - J1                                USB
@@ -47,6 +55,9 @@ PARTS
   o L:  Ferrite bead 32R, .06R 600mA (0805)
     - L1                                FT232RL
 
+  o L: 220uH, .21R 1.4A (r13x15)
+    - L2                                DC-to-DC converter
+    
   o LED: Orange 150mcd, 2.2V 20mA (0805)
     - LED1                              RX/TX
     - LED2                              Power
@@ -70,6 +81,15 @@ PARTS
     - R6                                Contrast for LCD1
     - R7                                Contrast for LCD2
 
+  o R: .33 1%, 0.125W (0805)
+    - R9                                DC-to-DC
+
+  o R: 1K2 1%, 0.125W (0805)
+    - R10                               DC-to-DC
+
+  o R: 3K9 1%, 0.125W (0805)
+    - R11                               DC-to-DC
+    
   o U: FT232RL, (SSOP-28)
     - U1
 
@@ -79,7 +99,7 @@ PARTS
   o U: MAX202CPWG4, (TSSOP-16)
     - U3                                RS-232
 
-  o U: L7805, (TO220)
+  o U: MC34063ADG4, (SOIC-8)
     - U4
 
   o U: LM317, (TO220)
