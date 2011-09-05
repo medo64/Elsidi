@@ -62,6 +62,9 @@ PARTS
     - LED1                              RX/TX
     - LED2                              Power
 
+  o Q: IRLML2060, 60V, 1.2A (SOT23)
+    - Q1                                Turns on backlight
+
   o R: 10 5%, 2.5W (a)
     - R5                                LED current limiter
 
@@ -84,12 +87,18 @@ PARTS
   o R: .33 1%, 0.125W (0805)
     - R9                                DC-to-DC
 
+  o R: 560 1%, 0.125W (0805)
+    - R12                               MOSFET gate (5V, 9mA)
+
   o R: 1K2 1%, 0.125W (0805)
     - R10                               DC-to-DC
 
   o R: 3K9 1%, 0.125W (0805)
     - R11                               DC-to-DC
-    
+
+  o R: 100K 1%, 0.125W (0805)
+    - R13                               MOSFET bleed-off resistor
+
   o U: FT232RL, (SSOP-28)
     - U1
 
