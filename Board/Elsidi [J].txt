@@ -33,9 +33,7 @@ PARTS
 
   o C: 470uF 16V, aluminum (r10x12)
     - C10                               DC-to-DC output
-
-  o C: 1000uF /25V                                                              real value is 700uF
-    - C11                               Low-pass filter                         t = RC;  100 * (1 / Freq) ? t   /  E7 = 100 * (1 / Freq) / R5        (*1000000 for uF)
+    - C11                               Low-pass filter                         t = RC;   C = 100 * ((1 / Freq) / R2)
 
   o D: ES1D-E3 (SMA)
     - D1                                protects 7805 from USB
