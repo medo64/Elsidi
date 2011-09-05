@@ -21,11 +21,9 @@ PARTS
   o C: 100nF 50V, X7R (0805)
     - C2 C4                             FT232
     - C5 C6 C7                          Decoupling
-    - C10                               317
 
   o C: 10uF 6V3, tantalum (0805)
     - C3                                FT232
-    - C11                               317
 
   o C: 1uF 35V, tantalum (0805)
     - C8                                DC-to-DC input
@@ -36,12 +34,14 @@ PARTS
   o C: 470pF 50V, X7R (0805)
     - C9                                DC-to-DC
 
+  o C: 1000uF /25V                                                              real value is 700uF
+    - C13                               Low-pass filter                         t = RC;  100 * (1 / Freq) ? t   /  E7 = 100 * (1 / Freq) / R5        (*1000000 for uF)
+
   o D: ES1D-E3 (SMA)
     - D1                                protects 7805 from LM317 and USB
     - D2                                protects USB 7805
     - D3                                reverse polarity protection
     - D4                                DC-to-DC
-    - D5                                protects LM317
 
   o FB:  Ferrite bead 32R, .06R 600mA (0805)
     - FB1                               FT232RL
@@ -71,14 +71,8 @@ PARTS
   o R: 100, 1W (2512)
     - R3                                Common ground resistors
 
-  o R: 330, 0.125W (0805)
-    - R4                                317
-
   o R: 680, 0.125W (0805)
     - R1 R2                             LED
-
-  o R: 1K trim, PT-10 LV10
-    - R8                                Backlight intensity.
 
   o R: 10K trim, PT-10 LV10
     - R6                                Contrast for LCD1
@@ -110,9 +104,6 @@ PARTS
 
   o U: MC34063ADG4, (SOIC-8)
     - U4
-
-  o U: LM317, (TO220)
-    - U5                                Backlight
 
 
 CASE
