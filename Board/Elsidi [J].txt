@@ -15,30 +15,30 @@ BOARD
 
 PARTS                              
 
+  o C: 470pF 50V, X7R (0805)
+    - C1                                DC-to-DC
+
   o C: 10nF 50V, X7R (0805)
-    - C1                                FT232
+    - C2                                FT232
 
   o C: 100nF 50V, X7R (0805)
-    - C2 C4                             FT232
-    - C5 C6 C7                          Decoupling
-
-  o C: 10uF 6V3, tantalum (0805)
-    - C3                                FT232
+    - C2 C3                             FT232
+    - C4 C5 C6 C7                       Decoupling
 
   o C: 1uF 35V, tantalum (0805)
     - C8                                DC-to-DC input
 
-  o C: 470uF 16V, aluminum (r10x12)
-    - C12                               DC-to-DC output
+  o C: 10uF 6V3, tantalum (0805)
+    - C9                                FT232
 
-  o C: 470pF 50V, X7R (0805)
-    - C9                                DC-to-DC
+  o C: 470uF 16V, aluminum (r10x12)
+    - C10                               DC-to-DC output
 
   o C: 1000uF /25V                                                              real value is 700uF
-    - C13                               Low-pass filter                         t = RC;  100 * (1 / Freq) ? t   /  E7 = 100 * (1 / Freq) / R5        (*1000000 for uF)
+    - C11                               Low-pass filter                         t = RC;  100 * (1 / Freq) ? t   /  E7 = 100 * (1 / Freq) / R5        (*1000000 for uF)
 
   o D: ES1D-E3 (SMA)
-    - D1                                protects 7805 from LM317 and USB
+    - D1                                protects 7805 from USB
     - D2                                protects USB 7805
     - D3                                reverse polarity protection
     - D4                                DC-to-DC
@@ -65,33 +65,31 @@ PARTS
   o Q: IRLML2060, 60V, 1.2A (SOT23)
     - Q1                                Turns on backlight
 
+  o R: .33 1%, 0.125W (0805)
+    - R1                                DC-to-DC
+
   o R: 10 5%, 2.5W (a)
-    - R5                                LED current limiter
+    - R2                                LED current limiter
 
   o R: 100, 1W (2512)
     - R3                                Common ground resistors
 
   o R: 680, 0.125W (0805)
-    - R1 R2                             LED
-
-  o R: 10K trim, PT-10 LV10
-    - R6                                Contrast for LCD1
-    - R7                                Contrast for LCD2
-
-  o R: .33 1%, 0.125W (0805)
-    - R9                                DC-to-DC
-
-  o R: 560 1%, 0.125W (0805)
-    - R12                               MOSFET gate (5V, 9mA)
+    - R4 R5                             LED
+    - R6                                MOSFET gate (5V, 7mA)
 
   o R: 1K2 1%, 0.125W (0805)
-    - R10                               DC-to-DC
+    - R7                                DC-to-DC
 
   o R: 3K9 1%, 0.125W (0805)
-    - R11                               DC-to-DC
+    - R8                                DC-to-DC
 
   o R: 100K 1%, 0.125W (0805)
-    - R13                               MOSFET bleed-off resistor
+    - R9                                MOSFET bleed-off resistor
+
+  o R: 10K trim, PT-10 LV10
+    - R10                               Contrast for LCD1
+    - R11                               Contrast for LCD2
 
   o U: FT232RL, (SSOP-28)
     - U1
