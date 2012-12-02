@@ -15,14 +15,14 @@ BOARD
 PARTS                              
 
   o C 100nF, 16V, X7R (0603)                                                    DK:399-1096-1-ND
-  - C1                                  Decoupling
+  - C1 C2                               Decoupling
 
   o C 10uF, 10V, X7R (0805)                                                     DK:587-2668-1-ND
-  - C2                                  Input decoupling
-  - C3                                  Low-pass filter (contrast)
+  - C3                                  Input decoupling
+  - C4                                  Low-pass filter (contrast)
 
   o C 100uF, 6.3V, Y5V (1206)                                                   DK:490-4512-1-ND
-  - C4                                  Low-pass filter (backlight)
+  - C5                                  Low-pass filter (backlight)
 
   o DS LED yellow, 20mA (1206)                                                  DK:475-2558-1-ND
   - DS1                                 Activity
