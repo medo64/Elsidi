@@ -1,0 +1,186 @@
+                                     Elsidi
+
+
+RATINGS
+
+  o Input voltage ........: 5 V
+  o Input current (max)...: 500 mA
+
+
+BOARD
+
+  o Board size ...........: 20.00 x 72.00 mm (2.77 sqin)
+
+
+PARTS                              
+
+  o C 100nF, 16V, X7R (0603)                                                    DK:399-1096-1-ND
+  - C1 C2                               Decoupling
+
+  o C 10uF, 10V, X7R (0805)                                                     DK:587-2668-1-ND
+  - C3                                  Input decoupling
+  - C4                                  Low-pass filter (contrast)
+
+  o C 100uF, 6.3V, Y5V (1206)                                                   DK:490-4512-1-ND
+  - C5                                  Low-pass filter (backlight)
+
+  o DS LED yellow, 20mA (1206)                                                  DK:475-2558-1-ND
+  - DS1                                 Activity
+
+  o J Header, 4w, right, unshrouded                                             DK:609-3319-ND
+  - J1                                  5V TTL USART
+
+  o J Header, 16w, vertical, unshrouded                                         DK:609-3287-ND
+  - J2                                  LCD
+
+  o J Header, 2x8w, vertical, unshrouded                                        DK:609-3220-ND
+  - J3                                  LCD
+
+  o Q DMP3098L-7 (SOT23-3)                                                      DK:DMP3098LDICT-ND
+  - Q1                                  Backlight PWM
+
+  o R 2.2, 5%, 2W (2512)                                                        DK:CRM2512-JW-2R2ELFCT-ND
+  - R1                                  Low-pass filter (backlight)
+
+  o R 220, 0.1W (0603)                                                          DK:RMCF0603JT220RCT-ND
+  - R2                                  Gate
+
+  o R 1K, 0.1W (0603)                                                           DK:CR0603-FX-1001ELF
+  - R3                                  LED
+
+  o R 10K, 0.1W (0603)                                                          DK:CR0603-JW-103ELFCT-ND
+  - R4                                  MCLR pull-up
+  - R5                                  Low-pass filter (contrast)
+
+  o U PIC16F1936 (SSOP-28)                                                      DK:PIC16F1936-I/SS-ND
+  - U1
+
+
+CASE (if needed)
+
+  o Side element 11.25 mm
+  -  PhoenixContact 2970002 (UMK-SE 11,25)
+  -  PhoenixContact 2970442 (UMK-SE 11,25-1)
+
+  o Base element 22.50 mm (1x)
+  - PhoenixContact 
+
+  o Foot element (DIN rail)
+  -  PhoenixContact 2970031 (UMK-FE)
+
+
+EXPLANATIONS
+
+  o This board supports 5V TTL USART connection. Pin order is [GND 5V RX TX] as
+    viewed from board side.
+
+  o Backlight intensity is controled via PWM.
+
+  o This board features two display connectors. Idea is to allow for easier
+    soldering. In most cases both display connectors should not be soldered on. 
+
+
+LCD INTERFACE
+
+  Elsidi uses total of 11 control lines for sending text and instructions to
+  LCD these lines are:
+    
+    RS       Selects registers.
+    R/W      Selects read or write.
+    E        Starts data read/write.
+    DB0-DB3  Four low order bidirectional tristate data bus pins.
+    DB4-DB7  Four high order bidirectional tristate data bus pins.
+
+  All lines except for E are multiplexed between two supported LCD devices. E
+  is controled separately for primary (E1) and secondary LCD display (E2). Only
+  one display can be controlled at any time.
+
+  Currently all 8 data lines are used for controlling LCD.
+
+
+USART INTERFACE
+
+  Hardware interface
+
+    Three wires are used - RXD, TXD and GND. All data is sent in ASCII at 9600
+    baud, 1 stop bit and no parity.
+
+  Modes of operation
+
+    Text mode will write each character to LCD as it comes while holding RS
+    high. Instruction mode will write each character to LCD while holding RS
+    low (thus directly controlling LCD instructions). Text mode is always used
+    unless specified otherwise by command characters.
+
+  Command characters
+    
+    Command characters are in ASCII range 0x08-0x0F (8-15 decimal). This range
+    was selected since only CGRAM characters are here and they can be selected
+    within 0x00-0x07 range. Here is meaning of characters:
+
+      0x08 BS   Reserved for future use.
+      0x09 HT   Next line.
+      0x0A LF   Execute.
+      0x0B VT   Reserved for future use.
+      0x0C FF   LCD instruction mode.
+      0x0D CR   Return home.
+      0x0E SO   Select secondary display.
+      0x0F SI   Select primary display.
+
+    Next line (HT)
+
+      Moves LCD cursor to next line. It is included as helper method for
+      controlling display from command line. Display is always considered as
+      having four lines and stops will be at locations: 0x00 (first line), 0x40
+      (second line), 0x14 (third line) and 0x54 (fourth line). After fourth
+      line no movement will be made until line is resetted (via CR command).
+
+    Execute (LF)
+    
+      Executes saved buffer. During execution no further input is received.
+      When execution is done single LF will be sent to USART. After execution
+      is done, LCD will be left in text mode and control will be given to
+      primary display. 
+
+    LCD instruction mode (FF)
+
+      Causes character that follows to be interpreted as direct instruction for
+      LCD. Next character will be sent to LCD with RS signal kept low. E.g.,
+      <FF> 0x02 will cause LCD to execute Return home command. After
+      instruction character, all further characters are interpreted as usual.
+
+    Return home (CR)
+
+      Executes Return home LCD instruction. Result will be same as <FF> 0x02
+      was executed. It is included as helper method for controlling display
+      from command line. This command will also reset tab position back to
+      first line.
+
+    Select secondary display (SO)
+        
+      Characters after this one will cause E2 line to be driven and thus
+      secondary display will receive all input. This command must be used for
+      each execution since primary display will be used by default.
+
+    Select primary display (SI)
+        
+      All further characters are executed via driving E1 line and thus
+      controling primary display. 
+
+  LCD startup sequence
+    
+    Startup sequence is executed each time hardware is restarted. It is defined
+    within device's EEPROM in same format as one used for USART communication
+    and thus it must end with LF. After all is done, single LF will be sent to
+    USART. As execution is finished LCD control will be set to primary display
+    and text mode will be selected.
+
+  Normal behaviour
+    
+    All characters received are saved in buffer with optional echoing to
+    computer (echoing is currently not used but it must be expected). Once
+    execute command is detected (LF), all characters are  sent as data toward
+    LCD until one of command characters is encountered. After execution is done
+    LF is sent back to computer, state returns to text mode and buffer is ready
+    to receive new characters. If buffer size (208 bytes) is exceeded all
+    further characters except LF are ignored.
