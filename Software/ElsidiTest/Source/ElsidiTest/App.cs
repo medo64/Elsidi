@@ -1,36 +1,35 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
+using System.Security.AccessControl;
+using System.Security.Principal;
 using System.Threading;
-using System.Diagnostics;
+using System.Windows.Forms;
 
 namespace TestElsidi {
     class App {
 
         static void Main() {
-            using (var x = new Medo.Device.Elsidi("COM1")) {
-                x.Open();
-                int n = 0;
-                x.AddClearDisplay();
-                while (true) {
-                    n += 1;
-                    //x.AddSwithToSecondaryDisplay();
-                    //x.AddLiteralText("\r" + n.ToString() + "\t\t" + DateTime.Now.ToLongDateString() + "\t" + DateTime.Now.ToLongTimeString());
-                    //x.AddSwithToPrimaryDisplay();
-                    //x.AddLiteralText("\r" + n.ToString() + "\t" + DateTime.Now.ToLongDateString().PadLeft(20) + "\t" + "Elsidi[revG]".PadLeft(20) + "\t" + DateTime.Now.ToLongTimeString().PadLeft(20));
-                    x.AddLiteralText("\rA123456789B123456789C123456789D123456789E123456789F123456789D123456789F123456789G123456789");
-                    x.AddDdramAddressChange(0x20);
-                    x.AddLiteralText("XXX");
-                    x.AddLiteralText("\r" + n.ToString() + " ");
-                    //x.AddLiteralText("\rElsidi [revG]\t" + n.ToString("0").PadLeft(20) + "\t" + DateTime.Now.ToLongDateString().PadLeft(20) + "\t" + DateTime.Now.ToLongTimeString().PadLeft(20));
-                    var sw = new Stopwatch();
-                    sw.Start();
-                    x.Execute();
-                    sw.Stop();
-                    Console.WriteLine(sw.ElapsedMilliseconds);
-                    Thread.Sleep(1000);
-                }
+            bool createdNew;
+            var mutexSecurity = new MutexSecurity();
+            mutexSecurity.AddAccessRule(new MutexAccessRule(new SecurityIdentifier(WellKnownSidType.WorldSid, null), MutexRights.FullControl, AccessControlType.Allow));
+            using (var setupMutex = new Mutex(false, @"Global\JosipMedved_ElsidiTest", out createdNew, mutexSecurity)) {
+                System.Windows.Forms.Application.EnableVisualStyles();
+                System.Windows.Forms.Application.SetCompatibleTextRenderingDefault(false);
+
+                Medo.Application.UnhandledCatch.ThreadException += new EventHandler<ThreadExceptionEventArgs>(UnhandledCatch_ThreadException);
+                Medo.Application.UnhandledCatch.Attach();
+
+                Application.Run(new MainForm());
             }
         }
+
+
+        private static void UnhandledCatch_ThreadException(object sender, ThreadExceptionEventArgs e) {
+#if !DEBUG
+            Medo.Diagnostics.ErrorReport.ShowDialog(null, e.Exception, new Uri("http://jmedved.com/feedback/"));
+#else
+            throw e.Exception;
+#endif
+        }
+
     }
 }
