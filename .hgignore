@@ -7,14 +7,17 @@ syntax: glob
 *.map
 *.mcs
 *.o
+*.rar
+*.zip
 
 Firmware/Binaries/*
-Firmware/Source/*/build/*
-Firmware/Source/*/disassembly/*
-Firmware/Source/*/dist/*
-Firmware/Source/*/funclist
+Firmware/Source/build/*
+Firmware/Source/disassembly/*
+Firmware/Source/dist/*
+Firmware/Source/funclist
 
 Hardware/Datasheets/*
+Hardware/Releases/*
 Hardware/Research/*
 
 Software/*/Source/*.suo
