@@ -1,0 +1,145 @@
+Elsidi serial interface
+-----------------------
+
+Each received character is sent to active LCD and then echoed back.
+
+
+Escape characters
+
+    Escape characters are in ASCII range 0x08-0x0F (8-15 decimal). This range
+    was selected since only CGRAM characters are here and they can be selected
+    within 0x00-0x07 range. Here is meaning of escape characters:
+      0x08 BS  Command mode.
+      0x09 HT  Next line.
+      0x0A LF  Return home.
+      0x0B VT  Reserved for future use.
+      0x0C FF  Instruction mode.
+      0x0D CR  Return home.
+      0x0E SO  Select secondary display.
+      0x0F SI  Select primary display.    
+
+    In order to ease manual data entry across different systems both <LF> and
+    <CR> will result in same action.
+
+    BS: Command mode
+
+        Upon receiving <BS> Elsidi will enter in command mode until <LF> is
+        received. If command execution was successful it will echo <LF>,
+        otherwise <BS> will be echoed.
+
+        ~ (defaults)
+
+            Returns backlight and contrast to default values. They are also
+            written to be used upon next boot.
+
+        b___ (backlight)
+
+            Letter <b> is followed by percent amount in decimal digits. Given
+            value is set as backlight until Elsidi loses power.
+
+        B___ (backlight write)
+
+            Letter <B> is followed by percent amount in decimal digits. Given
+            value is written in flash and it will be used upon next boot.
+
+        c___ (contrast)
+
+            Letter <c> is followed by percent amount in decimal digits. Given
+            value is set as contrast until Elsidi loses power.
+
+        C___ (contrast write)
+
+            Letter <C> is followed by percent amount in decimal digits. Given
+            value is written in flash and it will be used upon next boot.
+
+    HT: Next line
+
+      Moves LCD cursor to next line. It is included as helper method for
+      controlling display from command line. Display is always considered as
+      having four lines and stops will be at locations: 0x00 (first line), 0x40
+      (second line), 0x14 (third line) and 0x54 (fourth line). After fourth
+      line no movement will be made until line is resetted (via CR command).
+
+    LF: Return home
+
+      Executes Return home LCD instruction. Result will be same as <FF> 0x02
+      was executed. It is included as helper method for controlling display
+      from command line. This command will also reset tab position back to
+      first line.
+
+    FF: Instruction mode
+
+      Causes character that follows to be interpreted as direct instruction for
+      LCD. Next character will be sent to LCD with RS signal kept low. E.g.,
+      <FF> 0x02 will cause LCD to execute Return home command. After
+      instruction character, all further characters are interpreted as usual.
+
+    CR: Return home
+
+      Executes Return home LCD instruction. Result will be same as <FF> 0x02
+      was executed. It is included as helper method for controlling display
+      from command line. This command will also reset tab position back to
+      first line.
+
+    SO: Select secondary display
+
+      Characters after this one will cause E2 line to be driven and thus
+      secondary display will receive all input. This command must be used for
+      each execution since primary display will be used by default upon each
+      boot.
+
+    SI: Select primary display
+
+      All further characters are executed via driving E1 line and thus
+      controling primary display. 
+
+
+Examples
+
+    Basic write
+
+        Send ..: Line 1
+        Receive: Line 1
+        Result : Writes "Line 1" on display.
+
+    Two line write
+
+        Send ..: Line 1<HT>Line 2
+        Receive: Line 1<HT>Line 2
+        Result : Writes "Line 1" on first line and "Line 2" on second.
+
+    Return home
+
+        Send ..: <LF>
+        Receive: <LF>
+        Result : Cursor is set in left-top location.
+
+    Clear display
+
+        Send ..: <BS><LF>
+        Receive: <LF>
+        Result : Clears display.
+
+    Contrast 
+
+        Send ..: <BS>C90<LF>
+        Receive: <LF>
+        Result : Set contrast to 90%.
+
+    Backlight
+
+        Send ..: <BS>B10<LF>
+        Receive: <LF>
+        Result : Sets backlight to 10%.
+
+     Restore defaults
+
+        Send ..: <BS>~<LF>
+        Receive: <LF>
+        Result : Sets contrast to 90% and backlight to 0%.
+
+    Secondary display
+
+        Send ..: <SO>Line 1<SI>Line A
+        Receive: <SO>Line 1<SI>Line A
+        Result : Writes "Line 1" to secondary display and "Line A" to primary.
