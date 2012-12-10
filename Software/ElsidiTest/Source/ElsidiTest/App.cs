@@ -7,6 +7,7 @@ using System.Windows.Forms;
 namespace TestElsidi {
     class App {
 
+        [STAThread]
         static void Main() {
             bool createdNew;
             var mutexSecurity = new MutexSecurity();

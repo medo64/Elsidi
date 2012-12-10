@@ -16,7 +16,7 @@ Escape characters
       0x0C FF  Instruction mode.
       0x0D CR  Return home.
       0x0E SO  Select secondary display.
-      0x0F SI  Select primary display.    
+      0x0F SI  Select primary display.
 
     In order to ease manual data entry across different systems both <LF> and
     <CR> will result in same action.

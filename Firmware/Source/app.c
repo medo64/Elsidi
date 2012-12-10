@@ -21,7 +21,6 @@ void splash() {
     LATC0 = 1;
 }
 
-
 int readInt() {
     unsigned char isValid = 1;
     unsigned char hadNumbers = 0;

@@ -27,7 +27,7 @@
             this.nudBacklight = new System.Windows.Forms.NumericUpDown();
             this.lblContrast = new System.Windows.Forms.Label();
             this.nudContrast = new System.Windows.Forms.NumericUpDown();
-            this.btnOK = new System.Windows.Forms.Button();
+            this.btnSave = new System.Windows.Forms.Button();
             this.btnCancel = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.nudBacklight)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudContrast)).BeginInit();
@@ -36,7 +36,6 @@
             // lblBacklight
             // 
             this.lblBacklight.AutoSize = true;
-            this.lblBacklight.Enabled = false;
             this.lblBacklight.Location = new System.Drawing.Point(12, 42);
             this.lblBacklight.Name = "lblBacklight";
             this.lblBacklight.Size = new System.Drawing.Size(69, 17);
@@ -46,22 +45,15 @@
             // nudBacklight
             // 
             this.nudBacklight.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.nudBacklight.Enabled = false;
             this.nudBacklight.Location = new System.Drawing.Point(110, 40);
             this.nudBacklight.Name = "nudBacklight";
             this.nudBacklight.Size = new System.Drawing.Size(60, 22);
             this.nudBacklight.TabIndex = 11;
             this.nudBacklight.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
-            this.nudBacklight.Value = new decimal(new int[] {
-            100,
-            0,
-            0,
-            0});
             // 
             // lblContrast
             // 
             this.lblContrast.AutoSize = true;
-            this.lblContrast.Enabled = false;
             this.lblContrast.Location = new System.Drawing.Point(12, 14);
             this.lblContrast.Name = "lblContrast";
             this.lblContrast.Size = new System.Drawing.Size(65, 17);
@@ -71,36 +63,33 @@
             // nudContrast
             // 
             this.nudContrast.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.nudContrast.Enabled = false;
             this.nudContrast.Location = new System.Drawing.Point(110, 12);
             this.nudContrast.Name = "nudContrast";
             this.nudContrast.Size = new System.Drawing.Size(60, 22);
             this.nudContrast.TabIndex = 9;
             this.nudContrast.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             this.nudContrast.Value = new decimal(new int[] {
-            100,
+            90,
             0,
             0,
             0});
             // 
-            // btnOK
+            // btnSave
             // 
-            this.btnOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnOK.DialogResult = System.Windows.Forms.DialogResult.OK;
-            this.btnOK.Enabled = false;
-            this.btnOK.Location = new System.Drawing.Point(14, 80);
-            this.btnOK.Margin = new System.Windows.Forms.Padding(3, 15, 3, 3);
-            this.btnOK.Name = "btnOK";
-            this.btnOK.Size = new System.Drawing.Size(75, 23);
-            this.btnOK.TabIndex = 12;
-            this.btnOK.Text = "OK";
-            this.btnOK.UseVisualStyleBackColor = true;
+            this.btnSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnSave.Location = new System.Drawing.Point(14, 80);
+            this.btnSave.Margin = new System.Windows.Forms.Padding(3, 15, 3, 3);
+            this.btnSave.Name = "btnSave";
+            this.btnSave.Size = new System.Drawing.Size(75, 23);
+            this.btnSave.TabIndex = 12;
+            this.btnSave.Text = "Save";
+            this.btnSave.UseVisualStyleBackColor = true;
+            this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
             // 
             // btnCancel
             // 
             this.btnCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.btnCancel.Enabled = false;
             this.btnCancel.Location = new System.Drawing.Point(95, 80);
             this.btnCancel.Margin = new System.Windows.Forms.Padding(3, 15, 3, 3);
             this.btnCancel.Name = "btnCancel";
@@ -111,13 +100,12 @@
             // 
             // AdjustForm
             // 
-            this.AcceptButton = this.btnOK;
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.btnCancel;
             this.ClientSize = new System.Drawing.Size(182, 115);
             this.Controls.Add(this.btnCancel);
-            this.Controls.Add(this.btnOK);
+            this.Controls.Add(this.btnSave);
             this.Controls.Add(this.lblBacklight);
             this.Controls.Add(this.nudBacklight);
             this.Controls.Add(this.lblContrast);
@@ -143,7 +131,7 @@
         private System.Windows.Forms.NumericUpDown nudBacklight;
         private System.Windows.Forms.Label lblContrast;
         private System.Windows.Forms.NumericUpDown nudContrast;
-        private System.Windows.Forms.Button btnOK;
+        private System.Windows.Forms.Button btnSave;
         private System.Windows.Forms.Button btnCancel;
     }
 }

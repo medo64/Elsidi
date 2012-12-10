@@ -23,3 +23,4 @@ Hardware/Research/*
 Software/*/Source/*.suo
 Software/*/Source/*/bin/*
 Software/*/Source/*/obj/*
+Software/*/Source/*/*.csproj.user

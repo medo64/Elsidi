@@ -53,13 +53,21 @@ namespace TestElsidi {
         private void btnSend_Click(object sender, System.EventArgs e) {
             Settings.LastText = txtText.Text;
             var text = txtText.Text.Replace("\r\n", "\n");
-            this.Device.AddClearDisplay();
-            this.Device.AddLiteralText(text.Replace("\n", "\t"));
             var sw = new Stopwatch();
             sw.Start();
-            this.Device.Execute();
+            this.Device.ClearDisplay();
+            foreach (var line in text.Split('\n')) {
+                this.Device.SendText(line);
+                this.Device.NextLine();
+            }
             sw.Stop();
             Debug.WriteLine(sw.ElapsedMilliseconds);
+        }
+
+        private void btnAdjust_Click(object sender, EventArgs e) {
+            using (var frm = new AdjustForm(this.Device)) {
+                frm.ShowDialog(this);
+            }
         }
 
 

@@ -100,7 +100,7 @@
             this.btnAdjust.TabIndex = 5;
             this.btnAdjust.Text = "Adjust";
             this.btnAdjust.UseVisualStyleBackColor = true;
-            this.btnAdjust.Visible = false;
+            this.btnAdjust.Click += new System.EventHandler(this.btnAdjust_Click);
             // 
             // MainForm
             // 
