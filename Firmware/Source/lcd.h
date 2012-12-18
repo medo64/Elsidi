@@ -26,6 +26,24 @@ void _lcd_setDB(unsigned char data) {
 }
 
 
+char _lcd_currLine = 0;
+
+void lcd_setAddress(unsigned char address);
+
+void lcd_nextLine() {
+    _lcd_currLine += 1;
+    if (_lcd_currLine <= 3) {
+        switch (_lcd_currLine) {
+            case 1: lcd_setAddress(0x40); break;
+            case 2: lcd_setAddress(0x14); break;
+            case 3: lcd_setAddress(0x54); break;
+        }
+    } else {
+        _lcd_currLine = 4; //just reset it to one line above highest and do nothing
+    }
+}
+
+
 void lcd_writeInstruction(unsigned char data) {
     LCD_RS = 0;
     LCD_RW = 0;
@@ -33,6 +51,7 @@ void lcd_writeInstruction(unsigned char data) {
     _lcd_setEHigh();
     _lcd_setELow();
     __delay_ms(3);
+    if ((data == 0x01) || (data == 0x02))  { _lcd_currLine = 0; }
 }
 
 void lcd_clearDisplay() {

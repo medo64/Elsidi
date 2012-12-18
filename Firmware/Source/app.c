@@ -85,7 +85,6 @@ void main() {
     LED = 0;
 
 
-    char currLine = 0;
     while (1) {
         unsigned char data = uart_readByte();
         LED = 1;
@@ -160,22 +159,12 @@ void main() {
             } break;
 
             case 0x09: { //HT: Next line
-                currLine += 1;
-                if (currLine <= 3) {
-                    switch (currLine) {
-                        case 1: lcd_setAddress(0x40); break;
-                        case 2: lcd_setAddress(0x14); break;
-                        case 3: lcd_setAddress(0x54); break;
-                    }
-                } else {
-                    currLine = 4; //just reset it to one line above highest and do nothing
-                }
+                lcd_nextLine();
             } break;
 
             case 0x0A:
             case 0x0D: { //LF/CR: Return home
                 lcd_returnHome();
-                currLine = 0;
             } break;
 
             case 0x0B: { //VT: Reserved
