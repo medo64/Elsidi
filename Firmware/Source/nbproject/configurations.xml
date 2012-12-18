@@ -4,13 +4,11 @@
     <logicalFolder name="HeaderFiles"
                    displayName="Header Files"
                    projectFiles="true">
-      <logicalFolder name="f1" displayName="(Medo)" projectFiles="true">
-        <itemPath>eeprom.h</itemPath>
-        <itemPath>uart.h</itemPath>
-      </logicalFolder>
       <itemPath>config.h</itemPath>
       <itemPath>lcd.h</itemPath>
       <itemPath>settings.h</itemPath>
+      <itemPath>eeprom.h</itemPath>
+      <itemPath>uart.h</itemPath>
     </logicalFolder>
     <logicalFolder name="LinkerScript"
                    displayName="Linker Files"
@@ -20,6 +18,10 @@
                    displayName="Source Files"
                    projectFiles="true">
       <itemPath>app.c</itemPath>
+      <itemPath>lcd.c</itemPath>
+      <itemPath>settings.c</itemPath>
+      <itemPath>eeprom.c</itemPath>
+      <itemPath>uart.c</itemPath>
     </logicalFolder>
     <logicalFolder name="ExternalFiles"
                    displayName="Important Files"

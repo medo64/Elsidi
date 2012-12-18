@@ -1,5 +1,6 @@
 #include <pic16f1936.h>
 #include <pic.h>
+
 #include "config.h"
 
 #include "eeprom.h"
@@ -8,6 +9,60 @@
 #include "settings.h"
 #include "lcd.h"
 
+
+#define LED    LATC0
+
+
+void init() {
+    GIE = 0; //disable interrupts
+
+    IRCF3 = 1; //8 MHz oscillator (maximum for PLL)
+    IRCF2 = 1;
+    IRCF1 = 1;
+    IRCF0 = 0;
+
+    ANSELA = 0;
+    ANSELB = 0;
+    TRISA = 0b00000001; // D7 D6 D5 D4 D3 D2 D1 --
+    TRISB = 0b11000010; // -- -- E1 RW RS E2 -- D0
+    TRISC = 0b10111110; // RX TX -- -- -- CT BL AC
+    LATA = 0;
+    LATB = 0;
+    LATC = 0;
+
+    //pwm
+    PR2 = 0xFF;  //125 kHz PWM
+
+    //contast
+    CCP1M3  = 1; //pwm mode
+    CCP1M2  = 1;
+    CCP1M1  = 0;
+    CCP1M0  = 0;
+    STR1A   = 1; //P1A is output
+    CCPR1L  = 0;  //start with 0
+    DC2B1   = 0;
+    DC2B0   = 0;
+
+    //backlight
+    CCP2M3  = 1; //pwm mode
+    CCP2M2  = 1;
+    CCP2M1  = 0;
+    CCP2M0  = 0;
+    STR2A   = 1; //P2A is output
+    CCPR2L  = 0xFF; //start with max
+    DC2B1   = 1;
+    DC2B0   = 1;
+
+    //pwm timer
+    TMR2IF  = 0; //clear interrupt
+    T2CKPS1 = 0; //set prescaler (1:1)
+    T2CKPS0 = 0;
+    TMR2ON  = 1; //enable timer
+    while (!TMR2IF); //wait until timer overflows (to start at complete duty cycle)
+
+    TRISC2 = 0; //turn on contrast
+    TRISC1 = 0; //turn on backlight
+}
 
 void splash() {
     LED = 1;
@@ -55,6 +110,7 @@ bit readNothing() {
 const unsigned char DEFAULT_LINE_1[] = "Elsidi\0";
 const unsigned char DEFAULT_LINE_2[] = "www.jmedved.com\0";
 
+
 void main() {
     init();
     settings_init();    
@@ -100,15 +156,15 @@ void main() {
 
                     case '?': { //ID
                         if (readNothing()) {
-                            uart_writeBytes((unsigned char*)"Elsidi K 001", 12);
+                            uart_writeBytes((unsigned char*)"Elsidi K 2012-12-18", 19);
                             data = 0x0A; //valid multiline command will result in LF.
                         }
                     } break;
 
                     case '~': { //restore defaults
                         if (readNothing()) {
-                            settings_defaultContrast();
-                            settings_defaultBacklight();
+                            settings_setContrast(50);
+                            settings_setBacklight(1);
                             settings_writeContrast();
                             settings_writeBacklight();
                             lcd_useE(0x03);
