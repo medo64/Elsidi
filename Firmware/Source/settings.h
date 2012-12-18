@@ -12,15 +12,15 @@ void settings_init() {
 
 
 void settings_defaultContrast() {
-    _settings_current_contrast = 26; //0.5V (Vdd - Vo = 4.5V)
+    _settings_current_contrast = 50;
 }
 
 unsigned char settings_getContrast() {
     return _settings_current_contrast;
 }
 
-void settings_setContrast(unsigned char data) {
-    _settings_current_contrast = data;
+void settings_setContrast(unsigned char value) {
+    _settings_current_contrast = value;
 }
 
 void settings_writeContrast() {
@@ -36,8 +36,8 @@ unsigned char settings_getBacklight() {
     return _settings_current_backlight;
 }
 
-void settings_setBacklight(unsigned char data) {
-    _settings_current_backlight = data;
+void settings_setBacklight(unsigned char value) {
+    _settings_current_backlight = value;
 }
 
 void settings_writeBacklight() {

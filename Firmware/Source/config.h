@@ -1,7 +1,7 @@
 #pragma config FOSC     = INTOSC
 #pragma config WDTE     = OFF
 #pragma config PWRTE    = ON
-#pragma config MCLRE    = OFF
+#pragma config MCLRE    = ON
 #pragma config CP       = OFF
 #pragma config CPD      = OFF
 #pragma config BOREN    = ON
@@ -32,7 +32,7 @@
 #define LCD_D5 LATA5
 #define LCD_D6 LATA6
 #define LCD_D7 LATA7
-
+#define LED    LATC0
 
 #define bitSet(var, bitno)    ((var) |= 1UL << (bitno))
 #define bitClear(var, bitno)  ((var) &= ~(1UL << (bitno)))
@@ -48,24 +48,43 @@ void init() {
 
     ANSELA = 0;
     ANSELB = 0;
-    TRISA = 0b11111111; // D7 D6 D5 D4 D3 D2 D1 --
+    TRISA = 0b00000001; // D7 D6 D5 D4 D3 D2 D1 --
     TRISB = 0b11000010; // -- -- E1 RW RS E2 -- D0
     TRISC = 0b10111110; // RX TX -- -- -- CT BL AC
     LATA = 0;
     LATB = 0;
     LATC = 0;
 
-    PR2 = 0x3F; //125 kHz PWM
-    CCP1CON = 0; //contrast
-    CCPR1L = 0;  //start with 0 kHz
-    CCP2CON = 0; //backlight
-    CCPR2L = 0;  //start with 0 kHz
-    TMR2IF = 0; //clear interrupt
-    T2CKPS1 = 0; //set prescaler
-    T2CKPS0 = 0;
-    TMR2ON = 1; //enable timer
-    while (TMR2IF == 0); //wait until timer overflows (to start at complete duty cycle)
+    //pwm
+    PR2 = 0xFF;  //125 kHz PWM
 
-    TRISC1 = 0; //turn on contrast
-    TRISC2 = 0; //turn on backlight
+    //contast
+    CCP1M3  = 1; //pwm mode
+    CCP1M2  = 1;
+    CCP1M1  = 0;
+    CCP1M0  = 0;
+    STR1A   = 1; //P1A is output
+    CCPR1L  = 0;  //start with 0
+    DC2B1   = 0;
+    DC2B0   = 0;
+
+    //backlight
+    CCP2M3  = 1; //pwm mode
+    CCP2M2  = 1;
+    CCP2M1  = 0;
+    CCP2M0  = 0;
+    STR2A   = 1; //P2A is output
+    CCPR2L  = 0xFF; //start with max
+    DC2B1   = 1;
+    DC2B0   = 1;
+
+    //pwm timer
+    TMR2IF  = 0; //clear interrupt
+    T2CKPS1 = 0; //set prescaler (1:1)
+    T2CKPS0 = 0;
+    TMR2ON  = 1; //enable timer
+    while (!TMR2IF); //wait until timer overflows (to start at complete duty cycle)
+
+    TRISC2 = 0; //turn on contrast
+    TRISC1 = 0; //turn on backlight
 }

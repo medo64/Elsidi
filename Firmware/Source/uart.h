@@ -5,7 +5,7 @@
 
 /* Initializes UART with given baud rate. */
 void uart_init(int desiredBaudRate) {
-    SPBRG   = (unsigned char)(_XTAL_FREQ / desiredBaudRate / 64 - 1);
+    SPBRG   = (unsigned char)(_XTAL_FREQ / desiredBaudRate / 16 - 1);
     BRG16   = 0;    //8-bit
     BRGH    = 1;    //high speed
     SYNC    = 0;    //asynchronous mode
@@ -17,7 +17,7 @@ void uart_init(int desiredBaudRate) {
 
 /* Initializes TX for UART with given baud rate. */
 void uart_initTx(int desiredBaudRate) {
-    SPBRG   = (unsigned char)(_XTAL_FREQ / desiredBaudRate / 64 - 1);
+    SPBRG   = (unsigned char)(_XTAL_FREQ / desiredBaudRate / 16 - 1);
     BRG16   = 0;    //8-bit
     BRGH    = 1;    //high speed
     SYNC    = 0;    //asynchronous mode
@@ -28,7 +28,7 @@ void uart_initTx(int desiredBaudRate) {
 
 /* Initializes RX for UART with given baud rate. */
 void uart_initRx(int desiredBaudRate) {
-    SPBRG   = (unsigned char)(_XTAL_FREQ / desiredBaudRate / 64 - 1);
+    SPBRG   = (unsigned char)(_XTAL_FREQ / desiredBaudRate / 16 - 1);
     BRG16   = 0;    //8-bit
     BRGH    = 1;    //high speed
     SYNC    = 0;    //asynchronous mode
@@ -63,7 +63,8 @@ unsigned char uart_readByte() {
     while (RCIF == 0) { //wait until something is received
         asm("CLRWDT");
     }
-    return RCREG;
+    unsigned char data = RCREG;
+    return data;
 }
 
 /* Writes single byte to UART. */

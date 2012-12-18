@@ -1,24 +1,24 @@
 #include <pic16f1936.h>
+#include <pic.h>
 #include "config.h"
 
 #include "eeprom.h"
 #include "uart.h"
-#include "wait.h"
 
 #include "settings.h"
 #include "lcd.h"
 
 
 void splash() {
-    LATC0 = 1;
-    wait_ms(100);
-    LATC0 = 0;
-    wait_ms(100);
-    LATC0 = 1;
-    wait_ms(100);
-    LATC0 = 0;
-    wait_ms(100);
-    LATC0 = 1;
+    LED = 1;
+    __delay_ms(100);
+    LED = 0;
+    __delay_ms(100);
+    LED = 1;
+    __delay_ms(100);
+    LED = 0;
+    __delay_ms(100);
+    LED = 1;
 }
 
 int readInt() {
@@ -57,9 +57,10 @@ const unsigned char DEFAULT_LINE_2[] = "www.jmedved.com\0";
 
 void main() {
     init();
-    settings_init();
+    settings_init();    
     uart_init(9600);
 
+    
     splash();
 
     lcd_init();
@@ -76,13 +77,18 @@ void main() {
         lcd_writeData(DEFAULT_LINE_2[i]);
         i++;
     }
+    lcd_returnHome();
 
-    wait_ms(2000); //wait for 2 seconds
+    __delay_ms(100);
+    lcd_setContrastPwm(settings_getContrast());
+    lcd_setBacklightPwm(settings_getBacklight());
+    LED = 0;
 
 
     char currLine = 0;
     while (1) {
         unsigned char data = uart_readByte();
+        LED = 1;
         switch (data) {
             case 0x08: { //BS: Command mode
                 unsigned char cmd = uart_readByte();
@@ -91,6 +97,13 @@ void main() {
                     case 0x0D: { //clear display
                         lcd_clearDisplay();
                         data = 0x0A; //valid multiline command will result in LF.
+                    } break;
+
+                    case '?': { //ID
+                        if (readNothing()) {
+                            uart_writeBytes((unsigned char*)"Elsidi K 001", 12);
+                            data = 0x0A; //valid multiline command will result in LF.
+                        }
                     } break;
 
                     case '~': { //restore defaults
@@ -107,19 +120,17 @@ void main() {
                     case 'b': { //set backlight
                         int percent = readInt();
                         if ((percent >=0) && (percent<=100)) {
-                            unsigned char value = (unsigned char)(percent * 255 / 100);
-                            lcd_setBacklightPwm(value);
-                            settings_setBacklight(value);
+                            lcd_setBacklightPwm(percent);
+                            settings_setBacklight(percent);
                             data = 0x0A; //valid multiline command will result in LF.
                         }
                     } break;
 
                     case 'B': { //store given backlight as a default
                         int percent = readInt();
-                        if ((percent >=0) && (percent<=100)) {
-                            unsigned char value = (unsigned char)(percent * 255 / 100);
-                            lcd_setBacklightPwm(value);
-                            settings_setBacklight(value);
+                        if ((percent >=0) && (percent<=100)) {                            
+                            lcd_setBacklightPwm(percent);
+                            settings_setBacklight(percent);
                             settings_writeBacklight();
                             data = 0x0A; //valid multiline command will result in LF.
                         }
@@ -128,9 +139,8 @@ void main() {
                     case 'c': { //set contrast
                         int percent = readInt();
                         if ((percent >=0) && (percent<=100)) {
-                            unsigned char value = (unsigned char)((100-percent) * 255 / 100);
-                            lcd_setContrastPwm(value);
-                            settings_setContrast(value);
+                            lcd_setContrastPwm(percent);
+                            settings_setContrast(percent);
                             data = 0x0A; //valid multiline command will result in LF.
                         }
                     } break;
@@ -138,32 +148,34 @@ void main() {
                     case 'C': { //store given contrast as a default
                         int percent = readInt();
                         if ((percent >=0) && (percent<=100)) {
-                            unsigned char value = (unsigned char)((100-percent) * 255 / 100);
-                            lcd_setContrastPwm(value);
-                            settings_setContrast(value);
+                            lcd_setContrastPwm(percent);
+                            settings_setContrast(percent);
                             settings_writeContrast();
                             data = 0x0A; //valid multiline command will result in LF.
                         }
                     } break;
+
+                    default: readNothing(); break;
                 }
             } break;
 
             case 0x09: { //HT: Next line
                 currLine += 1;
-                if (currLine <= 4) {
+                if (currLine <= 3) {
                     switch (currLine) {
-                        case 1: lcd_setAddress(0x00); break;
-                        case 2: lcd_setAddress(0x40); break;
-                        case 3: lcd_setAddress(0x14); break;
-                        case 4: lcd_setAddress(0x54); break;
+                        case 1: lcd_setAddress(0x40); break;
+                        case 2: lcd_setAddress(0x14); break;
+                        case 3: lcd_setAddress(0x54); break;
                     }
                 } else {
-                    currLine = 4; //just reset it to highest line but do nothing
+                    currLine = 4; //just reset it to one line above highest and do nothing
                 }
             } break;
 
-            case 0x0A: { //LF: Return home
+            case 0x0A:
+            case 0x0D: { //LF/CR: Return home
                 lcd_returnHome();
+                currLine = 0;
             } break;
 
             case 0x0B: { //VT: Reserved
@@ -172,10 +184,6 @@ void main() {
             case 0x0C: { //FF: LCD instruction mode
                 unsigned char instruction = uart_readByte();
                 lcd_writeInstruction(instruction);
-            } break;
-
-            case 0x0D: { //CR: Return home
-                lcd_returnHome();
             } break;
 
             case 0x0E: { //SO: Select secondary display
@@ -192,5 +200,6 @@ void main() {
         }
 
         uart_writeByte(data); //echo
+        LED = 0;
     }
 }
