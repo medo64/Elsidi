@@ -1,0 +1,42 @@
+                                  Elsidi USB-B
+
+
+RATINGS
+
+  o Input voltage ........: 5 V
+  o Input current ........: 500 mA
+
+
+BOARD
+
+  o Board size ...........: 31.00 x 17.00 mm (0.82 sqin)
+
+
+PARTS                              
+
+  o C 10nF, C0G (0603)                                                          DK:445-6947-1-ND
+  - C1                                  FT232RL required
+
+  o C 100nF, X7R (0603)                                                         DK:399-1096-1-ND
+  - C2                                  FT232RL required
+
+  o C 4.7uF, ceramic (0603)                                                     DK:399-3482-1-ND
+  - C3                                  FT232RL required
+
+  o DS LED yellow, 20mA (0603)                                                  DK:475-2558-1-ND
+  - DS1                                 Activity
+
+  o J Header, 4w, female, right                                                 DK:S5440-ND
+  - J1                                  5V TTL USART
+
+  o J USB-B                                                                     DK:ED2983-ND
+  - J2                                  USB
+
+  o L Ferrite bead, 33O @100MHz, 50mO                                           DK:BK1608HS330-T
+  - L1                                  FT232RL required
+
+  o R 1K, 0.1W (0603)                                                           DK:CR0603-FX-1001ELF
+  - R1                                  LED
+
+  o U FT232RL (SSOP-28)                                                         DK:768-1007-1-ND
+  - U1

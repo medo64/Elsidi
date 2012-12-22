@@ -24,7 +24,7 @@ PARTS
   o C 100uF, Y5V (1206)                                                         DK:490-4512-1-ND
   - C5                                  Low-pass filter (backlight)
 
-  o DS LED yellow, 20mA (1206)                                                  DK:475-2558-1-ND
+  o DS LED yellow, 20mA (0603)                                                  DK:475-2558-1-ND
   - DS1                                 Activity
 
   o J Header, 4w, right, unshrouded                                             DK:609-3319-ND
