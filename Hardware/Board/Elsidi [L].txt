@@ -3,8 +3,9 @@
 
 RATINGS
 
-  o Input voltage ........: 5 V
-  o Input current (max)...: 500 mA
+  o Input voltage .............: 5 V
+  o Input current .............: 20 mA
+  o LCD backlight current (max): 500 mA
 
 
 BOARD
@@ -29,6 +30,15 @@ PARTS
 
   o J Header, 4w, right, unshrouded                                             DK:609-3319-ND
   - J1                                  5V TTL USART
+
+  o J Header, 16w, unshrouded                                                   DK:609-3287-ND
+  - J2a                                 LCD connector
+
+  o J Header, 2x8w, unshrouded                                                  DK:609-3220-ND
+  - J2b                                 LCD connector
+
+  o J Header, 2x8w, unshrouded                                                  DK:S2012EC-09-ND
+  - J2c                                 LCD connector
 
   o Q DMP3098L-7 (SOT23-3)                                                      DK:DMP3098LDICT-ND
   - Q1                                  Backlight PWM
