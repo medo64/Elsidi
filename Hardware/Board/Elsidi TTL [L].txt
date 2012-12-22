@@ -14,14 +14,14 @@ BOARD
 
 PARTS                              
 
-  o C 100nF, 16V, X7R (0603)                                                    DK:399-1096-1-ND
+  o C 100nF, X7R (0603)                                                         DK:399-1096-1-ND
   - C1 C2                               Decoupling
 
-  o C 10uF, 10V, X7R (0805)                                                     DK:587-2668-1-ND
+  o C 4.7uF, ceramic (0603)                                                     DK:399-3482-1-ND
   - C3                                  Bulk
   - C4                                  Low-pass filter (contrast)
 
-  o C 100uF, 6.3V, Y5V (1206)                                                   DK:490-4512-1-ND
+  o C 100uF, Y5V (1206)                                                         DK:490-4512-1-ND
   - C5                                  Low-pass filter (backlight)
 
   o DS LED yellow, 20mA (1206)                                                  DK:475-2558-1-ND
@@ -48,14 +48,16 @@ PARTS
 
 EXPLANATIONS
 
-  o This board supports 5V TTL USART connection. Pin order is [GND 5V RX TX] as
+  o This board supports 5V TTL UART connection. Pin order is [GND 5V RX TX] as
     viewed from board side.
 
-  o Backlight and contrast are controled via PWM.
+  o If mode is changed to I2C than pins are [GND 5V SCK SDA].
 
   o This board features three display connectors. Idea is to allow for easier
     soldering. Since connectors do overlap, you should only solder connector
-    that you will actually be using. 
+    that you will actually be using.
+
+  o Backlight and contrast are controled via PWM.
 
   o Two spots marked 0 and 1 are there to select two lowest bits for I2C
     address allowing up to four devices to be used at the same time.
