@@ -68,7 +68,3 @@ EXPLANATIONS
     that you will actually be using.
 
   o Backlight and contrast are controled via PWM.
-
-  o Two spots marked 0 and 1 are there to select two lowest bits for I2C
-    address allowing up to four devices to be used at the same time. This can
-    be done either by using 0 ohm resistor or just making a solder bridge.
