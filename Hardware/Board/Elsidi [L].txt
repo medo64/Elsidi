@@ -29,7 +29,7 @@ PARTS
   - DS1                                 Activity
 
   o J Header, 4w, right, unshrouded                                             DK:609-3319-ND
-  - J1                                  5V TTL USART
+  - J1                                  5V TTL UART/I2C
 
   o J Header, 16w, unshrouded                                                   DK:609-3287-ND
   - J2a                                 LCD connector
@@ -61,7 +61,7 @@ EXPLANATIONS
   o This board supports 5V TTL UART connection. Pin order is [GND 5V RX TX] as
     viewed from board side.
 
-  o If mode is changed to I2C than pins are [GND 5V SCK SDA].
+  o If mode is changed to I2C than pins are [GND 5V SDA SCL].
 
   o This board features three display connectors. Idea is to allow for easier
     soldering. Since connectors do overlap, you should only solder connector
