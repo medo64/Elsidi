@@ -30,25 +30,24 @@ void init() {
     LATB = 0;
     LATC = 0;
 
-    //pwm
-    PR2 = 0xFF;  //125 kHz PWM
+    PR2 = 0xFF;  //31.25 kHz PWM
 
     //contast
-    CCP1M3  = 1; //pwm mode
+    STR1A   = 1; //P1A is output
+    CCP1M3  = 1; //pwm mode (CCP2CON)
     CCP1M2  = 1;
     CCP1M1  = 0;
     CCP1M0  = 0;
-    STR1A   = 1; //P1A is output
-    CCPR1L  = 0;  //start with 0
+    CCPR1L  = 0; //start with 0
     DC2B1   = 0;
     DC2B0   = 0;
 
     //backlight
+    STR2A   = 1; //P2A is output
     CCP2M3  = 1; //pwm mode
     CCP2M2  = 1;
     CCP2M1  = 0;
     CCP2M0  = 0;
-    STR2A   = 1; //P2A is output
     CCPR2L  = 0xFF; //start with max
     DC2B1   = 1;
     DC2B0   = 1;
@@ -62,18 +61,6 @@ void init() {
 
     TRISC2 = 0; //turn on contrast
     TRISC1 = 0; //turn on backlight
-}
-
-void splash() {
-    LED = 1;
-    __delay_ms(100);
-    LED = 0;
-    __delay_ms(100);
-    LED = 1;
-    __delay_ms(100);
-    LED = 0;
-    __delay_ms(100);
-    LED = 1;
 }
 
 int readInt() {
@@ -107,8 +94,9 @@ bit readNothing() {
 }
 
 
-const unsigned char DEFAULT_LINE_1[] = "Elsidi\0";
-const unsigned char DEFAULT_LINE_2[] = "www.jmedved.com\0";
+const unsigned char ELSIDI_NAME[] = "Elsidi\0";
+const unsigned char ELSIDI_URL[] = "www.jmedved.com\0";
+const unsigned char ELSIDI_VERSION[] = "Elsidi K 2013-01-02\0";
 
 
 void main() {
@@ -117,29 +105,28 @@ void main() {
     uart_init(9600);
 
     
-    splash();
-
+    LED = 1;
     lcd_init();
 
-
     int i = 0;
-    while (DEFAULT_LINE_1[i] != '\0') {
-        lcd_writeData(DEFAULT_LINE_1[i]);
+    while (ELSIDI_NAME[i] != '\0') {
+        lcd_writeData(ELSIDI_NAME[i]);
         i++;
     }
     i = 0;
     lcd_setAddress(0x40); //line2
-    while (DEFAULT_LINE_2[i] != '\0') {
-        lcd_writeData(DEFAULT_LINE_2[i]);
+    while (ELSIDI_URL[i] != '\0') {
+        lcd_writeData(ELSIDI_URL[i]);
         i++;
     }
     lcd_returnHome();
 
-    __delay_ms(100);
     lcd_setContrastPwm(settings_getContrast());
     lcd_setBacklightPwm(settings_getBacklight());
-    LED = 0;
 
+    __delay_ms(1000);
+    lcd_clearDisplay();
+    LED = 0;
 
     while (1) {
         unsigned char data = uart_readByte();
@@ -156,7 +143,11 @@ void main() {
 
                     case '?': { //ID
                         if (readNothing()) {
-                            uart_writeBytes((unsigned char*)"Elsidi K 2012-12-18", 19);
+                            int i = 0;
+                            while (ELSIDI_VERSION[i] != '\0') {
+                                uart_writeByte(ELSIDI_VERSION[i]);
+                                i++;
+                            }
                             data = 0x0A; //valid multiline command will result in LF.
                         }
                     } break;
