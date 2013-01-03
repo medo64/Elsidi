@@ -39,6 +39,9 @@ PARTS
   o Q DMP3098L-7 (SOT23-3)                                                      DK:DMP3098LDICT-ND
   - Q1                                  Backlight PWM
 
+  o R 0, 0.1W (0603)                                                            DK:
+  - R4                                  Low-pass filter (contrast)
+
   o R 2.2, 5%, 2W (2512)                                                        DK:CRM2512-JW-2R2ELFCT-ND
   - R1                                  Low-pass filter (backlight)
 
@@ -48,12 +51,17 @@ PARTS
   o R 1K, 0.1W (0603)                                                           DK:CR0603-FX-1001ELF
   - R3                                  LED
 
-  o R 10K, 0.1W (0603)                                                          DK:CR0603-JW-103ELFCT-ND
-  - R4                                  MCLR pull-up
-  - R5                                  Low-pass filter (contrast)
-
   o U PIC16F1936 (SSOP-28)                                                      DK:PIC16F1936-I/SS-ND
   - U1
+
+
+BOTCHED
+
+  o R4 must be shorted out.
+
+  o R5 is not needed.
+    - MCLR line is not used for anything but programming so pull-up resistor
+      can be safely omitted
 
 
 CASE (if needed)
