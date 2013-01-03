@@ -40,7 +40,7 @@ PARTS
   o J Header, 2x8w, unshrouded                                                  DK:S2012EC-09-ND
   - J2c                                 LCD connector
 
-  o Q DMP3098L-7 (SOT23-3)                                                      DK:DMP3098LDICT-ND
+  o Q DMP2215L-7 (SOT23-3)                                                      DK:DMP2215LDICT-ND
   - Q1                                  Backlight PWM
 
   o R 2.2, 5%, 2W (2512)                                                        DK:CRM2512-JW-2R2ELFCT-ND
