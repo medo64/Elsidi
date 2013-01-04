@@ -5,7 +5,7 @@ RATINGS
 
   o Input voltage .............: 5 V
   o Input current .............: 20 mA
-  o LCD backlight current (max): 500 mA
+  o LCD backlight current (max): 450 mA
 
 
 BOARD
@@ -20,7 +20,7 @@ PARTS
 
   o C 4.7uF, ceramic (0603)                                                     DK:399-3482-1-ND
   - C3                                  Bulk
-  - C4                                  Low-pass filter (contrast)
+  - C4                                  Contrast
 
   o C 100uF, Y5V (1206)                                                         DK:490-4512-1-ND
   - C5                                  Low-pass filter (backlight)
