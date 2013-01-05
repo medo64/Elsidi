@@ -63,24 +63,63 @@ void init() {
     TRISC1 = 0; //turn on backlight
 }
 
-int readInt() {
-    unsigned char isValid = 1;
-    unsigned char hadNumbers = 0;
-    int value = 0;
+#define READPERCENT_STATE_DEFAULT 0
+#define READPERCENT_STATE_NUMBER  1
+#define READPERCENT_STATE_INCREMENT 2
+#define READPERCENT_STATE_DECREMENT 3
+#define READPERCENT_STATE_INVALID 255
+
+bit readPercent(unsigned char *value, unsigned char *charCount) {
+    *charCount = 0;
+    unsigned char state = READPERCENT_STATE_DEFAULT;
     while(1) {
         unsigned char data = uart_readByte();
         if ((data==0x0A) || (data==0x0D)) { break; } //both LF and CR are supported
-        if (isValid) {
-            if ((data >= '0') && (data <='9')) {
-                hadNumbers = 1;
-                unsigned char digitValue = (data - '0');
-                value = value * 10 + digitValue;
+        if (*charCount < 255) { *charCount += 1; }
+        if (state == READPERCENT_STATE_DEFAULT) {
+            if ((data >= '0') && (data <= '9')) {
+                *value = 0; //start from scratch
+                state = READPERCENT_STATE_NUMBER;
+            } else if (data == '+') {
+                state = READPERCENT_STATE_INCREMENT;
+            } else if (data == '-') {
+                state = READPERCENT_STATE_DECREMENT;
             } else {
-                isValid = 0;
+                state = READPERCENT_STATE_INVALID;
             }
         }
+        switch (state) {
+            case READPERCENT_STATE_NUMBER: {
+                if ((data >= '0') && (data <='9')) {
+                    unsigned char digitValue = (data - '0');
+                    if ((*value < 10) || ((*value == 10) && (data == 0))) {
+                        *value = (*value * 10) + digitValue;
+                    } else {
+                        state = READPERCENT_STATE_INVALID;
+                    }
+                } else {
+                    state = READPERCENT_STATE_INVALID;
+                }
+            } break;
+
+            case READPERCENT_STATE_INCREMENT: {
+                if (data == '+') {
+                    if (*value < 100) { *value += 1; }
+                } else {
+                    state = READPERCENT_STATE_INVALID;
+                }
+            } break;
+
+            case READPERCENT_STATE_DECREMENT: {
+                if (data == '-') {
+                    if (*value > 0) { *value -= 1; }
+                } else {
+                    state = READPERCENT_STATE_INVALID;
+                }
+            } break;
+        }
     }
-    return (isValid && hadNumbers) ? value : -32768;
+    return (state != READPERCENT_STATE_INVALID);
 }
 
 bit readNothing() {
@@ -93,6 +132,23 @@ bit readNothing() {
     return (isValid) ? 1 : 0;
 }
 
+void writePercent(unsigned char value) {
+    unsigned char d1 = value / 100;
+    unsigned char d2 = (value / 10) % 10;
+    unsigned char d3 = value % 10;
+    if (d1 == 0) {
+        if (d2 == 0) {
+            uart_writeByte('0' + d3);
+        } else {
+            uart_writeByte('0' + d2);
+            uart_writeByte('0' + d3);
+        }
+    } else {
+        uart_writeByte('0' + d1);
+        uart_writeByte('0' + d2);
+        uart_writeByte('0' + d3);
+    }
+}
 
 const unsigned char ELSIDI_NAME[] = "Elsidi\0";
 const unsigned char ELSIDI_URL[] = "www.jmedved.com\0";
@@ -164,38 +220,54 @@ void main() {
                     } break;
 
                     case 'b': { //set backlight
-                        int percent = readInt();
-                        if ((percent >=0) && (percent<=100)) {
-                            lcd_setBacklightPwm(percent);
-                            settings_setBacklight(percent);
+                        unsigned char percent = settings_getBacklight();
+                        unsigned char charCount;
+                        if (readPercent(&percent, &charCount)) {
+                            if (charCount == 0) { //report back percentage
+                                writePercent(percent);
+                            } else {
+                                lcd_setBacklightPwm(percent);
+                                settings_setBacklight(percent);
+                            }
                             data = 0x0A; //valid multiline command will result in LF.
                         }
                     } break;
 
                     case 'B': { //store given backlight as a default
-                        int percent = readInt();
-                        if ((percent >=0) && (percent<=100)) {                            
-                            lcd_setBacklightPwm(percent);
-                            settings_setBacklight(percent);
+                        unsigned char percent = settings_getBacklight();
+                        unsigned char charCount;
+                        if (readPercent(&percent, &charCount)) {
+                            if (charCount > 0) {
+                                lcd_setBacklightPwm(percent);
+                                settings_setBacklight(percent);
+                            }
                             settings_writeBacklight();
                             data = 0x0A; //valid multiline command will result in LF.
                         }
                     } break;
 
                     case 'c': { //set contrast
-                        int percent = readInt();
-                        if ((percent >=0) && (percent<=100)) {
-                            lcd_setContrastPwm(percent);
-                            settings_setContrast(percent);
+                        unsigned char percent = settings_getContrast();
+                        unsigned char charCount;
+                        if (readPercent(&percent, &charCount)) {
+                            if (charCount == 0) { //report back percentage
+                                writePercent(percent);
+                            } else {
+                                lcd_setContrastPwm(percent);
+                                settings_setContrast(percent);
+                            }
                             data = 0x0A; //valid multiline command will result in LF.
                         }
                     } break;
 
                     case 'C': { //store given contrast as a default
-                        int percent = readInt();
-                        if ((percent >=0) && (percent<=100)) {
-                            lcd_setContrastPwm(percent);
-                            settings_setContrast(percent);
+                        unsigned char percent = settings_getContrast();
+                        unsigned char charCount;
+                        if (readPercent(&percent, &charCount)) {
+                            if (charCount > 0) {
+                                lcd_setContrastPwm(percent);
+                                settings_setContrast(percent);
+                            }
                             settings_writeContrast();
                             data = 0x0A; //valid multiline command will result in LF.
                         }
