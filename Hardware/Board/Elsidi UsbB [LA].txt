@@ -32,7 +32,7 @@ PARTS
   o J USB-B                                                                     DK:ED2983-ND
   - J2                                  USB
 
-  o L Ferrite bead, 33O @100MHz, 50mO                                           DK:BK1608HS330-T
+  o L Ferrite bead, 33O @100MHz, 50mO                                           DK:587-1871-1-ND
   - L1                                  FT232RL required
 
   o R 1K, 0.1W (0603)                                                           DK:CR0603-FX-1001ELF
