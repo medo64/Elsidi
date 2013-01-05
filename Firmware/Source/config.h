@@ -22,4 +22,9 @@
 
 #define _XTAL_FREQ 32000000
 
+
+const unsigned char ELSIDI_NAME[] = "Elsidi\0";
+const unsigned char ELSIDI_URL[] = "www.jmedved.com\0";
+const unsigned char ELSIDI_VERSION[] = "Elsidi K 2013-01-05\0";
+
 #endif
