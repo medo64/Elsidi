@@ -130,13 +130,12 @@ void processByte(unsigned char data) {
                     }
                 } break;
 
-                case '~': { //restore defaults
+                case '~': { //restore startup defaults
                     if (readNothing()) {
-                        settings_setContrast(50);
-                        settings_setBacklight(1);
-                        settings_writeContrast();
-                        settings_writeBacklight();
-                        lcd_useE(0x03);
+                        settings_init();
+                        lcd_setBacklightPwm(settings_getBacklight());
+                        lcd_setContrastPwm(settings_getContrast());
+                        lcd_useE(0x01);
                         data = 0x0A; //valid multiline command will result in LF.
                     }
                 } break;

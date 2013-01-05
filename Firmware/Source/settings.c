@@ -15,10 +15,6 @@ void settings_init() {
 }
 
 
-void settings_defaultContrast() {
-    _settings_current_contrast = 50;
-}
-
 unsigned char settings_getContrast() {
     return _settings_current_contrast;
 }
@@ -31,10 +27,6 @@ void settings_writeContrast() {
     eeprom_writeByte(_SETTINGS_EEPROM_ADDRESS_CONTRAST, _settings_current_contrast);
 }
 
-
-void settings_defaultBacklight() {
-    _settings_current_backlight = 0;
-}
 
 unsigned char settings_getBacklight() {
     return _settings_current_backlight;

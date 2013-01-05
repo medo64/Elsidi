@@ -2,7 +2,7 @@
 #include <pic.h>
 
 
-unsigned char _lcd_selectedE = 0x03; //select both displays at first
+unsigned char _lcd_selectedE = 0x01;
 
 void _lcd_setEHigh() {
     if (_lcd_selectedE & 0x01) { LCD_E1 = 1;  }
