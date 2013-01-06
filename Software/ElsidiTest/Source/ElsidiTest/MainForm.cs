@@ -3,6 +3,7 @@ using System;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO.Ports;
+using System.Text;
 using System.Windows.Forms;
 
 namespace TestElsidi {
@@ -50,6 +51,12 @@ namespace TestElsidi {
             }
         }
 
+        private void txtText_KeyDown(object sender, KeyEventArgs e) {
+            if (e.KeyData == (Keys.Control | Keys.A)) {
+                txtText.SelectAll();
+            }
+        }
+
         private void btnSend_Click(object sender, System.EventArgs e) {
             Settings.LastText = txtText.Text;
             var text = txtText.Text.Replace("\r\n", "\n");
@@ -59,6 +66,22 @@ namespace TestElsidi {
             foreach (var line in text.Split('\n')) {
                 this.Device.SendText(line);
                 this.Device.NextLine();
+            }
+            sw.Stop();
+            Debug.WriteLine(sw.ElapsedMilliseconds);
+        }
+
+        private void btnStress_Click(object sender, EventArgs e) {
+            var sb = new StringBuilder();
+            var text = sb.ToString();
+            var sw = new Stopwatch();
+            sw.Start();
+            this.Device.ClearDisplay();
+            for (int i = 0; i < 128; i++) {
+                char ch = (char)('0' + i % 10);
+                this.Device.ReturnHome();
+                this.Device.ChangeDdramAddress(i);
+                this.Device.SendText(ch.ToString());
             }
             sw.Stop();
             Debug.WriteLine(sw.ElapsedMilliseconds);
@@ -76,15 +99,17 @@ namespace TestElsidi {
                 btnConnect.Text = "Disconnect";
                 cmbSerialPort.Enabled = false;
                 txtText.Enabled = true;
-                btnAdjust.Enabled = true;
                 btnSend.Enabled = true;
+                btnStress.Enabled = true;
+                btnAdjust.Enabled = true;
                 this.AcceptButton = null;
             } else {
                 btnConnect.Text = "Connect";
                 cmbSerialPort.Enabled = true;
                 txtText.Enabled = false;
-                btnAdjust.Enabled = false;
                 btnSend.Enabled = false;
+                btnStress.Enabled = false;
+                btnAdjust.Enabled = false;
                 this.AcceptButton = btnConnect;
             }
         }

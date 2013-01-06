@@ -2,21 +2,28 @@
 #include <pic.h>
 
 
-unsigned char _lcd_selectedE = 0x01;
+unsigned char selectedE = 0x03;
 
-void _lcd_setEHigh() {
-    if (_lcd_selectedE & 0x01) { LCD_E1 = 1;  }
-    if (_lcd_selectedE & 0x02) { LCD_E2 = 1;  }
-    __delay_ms(1);
+void pulseE() {
+    if (selectedE == 0x03) {
+        LCD_E1 = 1;
+        LCD_E2 = 1;
+        __delay_us(5);
+        LCD_E1 = 0;
+        LCD_E2 = 0;
+    } else if (selectedE == 0x02) {
+        LCD_E2 = 1;
+        __delay_us(5);
+        LCD_E2 = 0;
+    } else {
+        LCD_E1 = 1;
+        __delay_us(5);
+        LCD_E1 = 0;
+    }
+    __delay_us(20);
 }
 
-void _lcd_setELow() {
-    if (_lcd_selectedE & 0x01) { LCD_E1 = 0;  }
-    if (_lcd_selectedE & 0x02) { LCD_E2 = 0;  }
-    __delay_ms(1);
-}
-
-void _lcd_setDB(unsigned char data) {
+void setDB(unsigned char data) {
     if (data & 0x01) { LCD_D0 = 1; } else { LCD_D0 = 0; }
     if (data & 0x02) { LCD_D1 = 1; } else { LCD_D1 = 0; }
     if (data & 0x04) { LCD_D2 = 1; } else { LCD_D2 = 0; }
@@ -28,18 +35,18 @@ void _lcd_setDB(unsigned char data) {
 }
 
 
-char _lcd_currLine = 0;
+char CurrLine = 0;
 
 void lcd_nextLine() {
-    _lcd_currLine += 1;
-    if (_lcd_currLine <= 3) {
-        switch (_lcd_currLine) {
+    CurrLine += 1;
+    if (CurrLine <= 3) {
+        switch (CurrLine) {
             case 1: lcd_setAddress(0x40); break;
             case 2: lcd_setAddress(0x14); break;
             case 3: lcd_setAddress(0x54); break;
         }
     } else {
-        _lcd_currLine = 4; //just reset it to one line above highest and do nothing
+        CurrLine = 4; //just reset it to one line above highest and do nothing
     }
 }
 
@@ -47,11 +54,14 @@ void lcd_nextLine() {
 void lcd_writeInstruction(unsigned char data) {
     LCD_RS = 0;
     LCD_RW = 0;
-    _lcd_setDB(data);
-    _lcd_setEHigh();
-    _lcd_setELow();
-    __delay_ms(3);
-    if ((data == 0x01) || (data == 0x02))  { _lcd_currLine = 0; }
+    setDB(data);
+    pulseE();
+    if ((data == 0x01) || (data == 0x02))  {
+        CurrLine = 0;
+        __delay_ms(2);
+    } else {
+        __delay_us(25);
+    }
 }
 
 void lcd_clearDisplay() {
@@ -60,7 +70,6 @@ void lcd_clearDisplay() {
 
 void lcd_returnHome() {
     lcd_writeInstruction(0x02);
-    __delay_ms(3);
 }
 
 void lcd_setAddress(unsigned char address) {
@@ -71,9 +80,8 @@ void lcd_setAddress(unsigned char address) {
 void lcd_writeData(unsigned char data) {
     LCD_RS = 1;
     LCD_RW = 0;
-    _lcd_setDB(data);
-    _lcd_setEHigh();
-    _lcd_setELow();
+    setDB(data);
+    pulseE();
 }
 
 
@@ -88,7 +96,7 @@ void lcd_setBacklightPwm(unsigned char percent) {
 }
 
 void lcd_useE(unsigned char mask) {
-    _lcd_selectedE = mask;
+    selectedE = mask;
 }
 
 

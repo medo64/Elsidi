@@ -29,6 +29,7 @@
             this.txtText = new System.Windows.Forms.TextBox();
             this.btnSend = new System.Windows.Forms.Button();
             this.btnAdjust = new System.Windows.Forms.Button();
+            this.btnStress = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // lblSerialPort
@@ -77,6 +78,7 @@
             this.txtText.Size = new System.Drawing.Size(278, 70);
             this.txtText.TabIndex = 3;
             this.txtText.WordWrap = false;
+            this.txtText.KeyDown += new System.Windows.Forms.KeyEventHandler(this.txtText_KeyDown);
             // 
             // btnSend
             // 
@@ -92,15 +94,27 @@
             // 
             // btnAdjust
             // 
-            this.btnAdjust.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.btnAdjust.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnAdjust.Enabled = false;
-            this.btnAdjust.Location = new System.Drawing.Point(93, 118);
+            this.btnAdjust.Location = new System.Drawing.Point(215, 118);
             this.btnAdjust.Name = "btnAdjust";
             this.btnAdjust.Size = new System.Drawing.Size(75, 23);
-            this.btnAdjust.TabIndex = 5;
+            this.btnAdjust.TabIndex = 6;
             this.btnAdjust.Text = "Adjust";
             this.btnAdjust.UseVisualStyleBackColor = true;
             this.btnAdjust.Click += new System.EventHandler(this.btnAdjust_Click);
+            // 
+            // btnStress
+            // 
+            this.btnStress.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.btnStress.Enabled = false;
+            this.btnStress.Location = new System.Drawing.Point(93, 118);
+            this.btnStress.Name = "btnStress";
+            this.btnStress.Size = new System.Drawing.Size(75, 23);
+            this.btnStress.TabIndex = 5;
+            this.btnStress.Text = "Stress";
+            this.btnStress.UseVisualStyleBackColor = true;
+            this.btnStress.Click += new System.EventHandler(this.btnStress_Click);
             // 
             // MainForm
             // 
@@ -108,6 +122,7 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(302, 153);
+            this.Controls.Add(this.btnStress);
             this.Controls.Add(this.btnAdjust);
             this.Controls.Add(this.btnSend);
             this.Controls.Add(this.txtText);
@@ -130,5 +145,6 @@
         private System.Windows.Forms.TextBox txtText;
         private System.Windows.Forms.Button btnSend;
         private System.Windows.Forms.Button btnAdjust;
+        private System.Windows.Forms.Button btnStress;
     }
 }

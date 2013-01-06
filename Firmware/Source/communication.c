@@ -135,7 +135,7 @@ void processByte(unsigned char data) {
                         settings_init();
                         lcd_setBacklightPwm(settings_getBacklight());
                         lcd_setContrastPwm(settings_getContrast());
-                        lcd_useE(0x01);
+                        lcd_useE(0x03); //use both connectors for same output
                         data = 0x0A; //valid multiline command will result in LF.
                     }
                 } break;
