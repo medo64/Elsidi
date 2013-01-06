@@ -4,7 +4,7 @@
 //2010-04-17: Changed namespace from Medo.IO.SerialDevices to Medo.Device.
 //2010-07-19: Compatible with Elsidi revG; not compatible with rev 3.
 //2012-11-24: Changing methods AddSwithTo*Display to AddSwitchTo*Display.
-//2012-12-09: Updated for Elsidi [K].
+//2013-01-06: Updated for Elsidi [K].
 
 
 using System;
@@ -231,6 +231,18 @@ namespace Medo.Device {
         /// <param name="command">Command character.</param>
         /// <param name="commandData">Command data.</param>
         public Boolean SendTextCommand(Char command, String commandData) {
+            byte[] bytes;
+            return SendTextCommand(command, commandData, out bytes);
+        }
+
+        /// <summary>
+        /// Sends command to Elsidi.
+        /// Returns true if operation succeeded.
+        /// </summary>
+        /// <param name="command">Command character.</param>
+        /// <param name="commandData">Command data.</param>
+        /// <param name="responseBytes">Command response bytes.</param>
+        private Boolean SendTextCommand(Char command, String commandData, out Byte[] responseBytes) {
             this._serial.DiscardInBuffer();
             this._serial.DiscardOutBuffer();
 
@@ -245,11 +257,28 @@ namespace Medo.Device {
             bufferList.Add(LF);
             var buffer = bufferList.ToArray();
             this._serial.Write(buffer, 0, buffer.Length);
-            var ret = this._serial.ReadByte();
-            return (ret == LF);
+
+            var response = new List<Byte>();
+            var isValid = false;
+            while (true) {
+                var singleInt = this._serial.ReadByte();
+                if (singleInt != -1) {
+                    var singleByte = (byte)singleInt;
+                    response.Add(singleByte);
+                    if (singleByte == LF) {
+                        isValid = true;
+                        break;
+                    } else if (singleByte == BS) {
+                        break;
+                    }
+                } else {
+                    break;
+                }
+            }
+            responseBytes = response.ToArray();
+            return isValid;
         }
 
-    
         /// <summary>
         /// Moves cursor to next line.
         /// Returns true if operation succeeded.
@@ -294,6 +323,24 @@ namespace Medo.Device {
 
 
         /// <summary>
+        /// Returns contrast percent currently set.
+        /// </summary>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1024:UsePropertiesWhereAppropriate", Justification = "This method might be perceivably slower than the time that is required to get the value of a field.")]
+        public Int32 GetContrast() {
+            byte[] bytes;
+            if (SendTextCommand('c', "", out bytes)) {
+                var percentText = System.Text.ASCIIEncoding.ASCII.GetString(bytes);
+                int percent;
+                if (int.TryParse(percentText, NumberStyles.Integer, CultureInfo.InvariantCulture, out percent)) {
+                    if ((percent >= 0) && (percent <= 100)) {
+                        return percent;
+                    }
+                }
+            }
+            return -1;
+        }
+
+        /// <summary>
         /// Temporarily sets contrast.
         /// Returns true if operation succeeded.
         /// </summary>
@@ -315,12 +362,30 @@ namespace Medo.Device {
             return SendTextCommand((save ? 'C' : 'c'), percent.ToString(CultureInfo.InvariantCulture));
         }
 
+
+        /// <summary>
+        /// Returns backlight percent currently set.
+        /// </summary>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1024:UsePropertiesWhereAppropriate", Justification = "This method might be perceivably slower than the time that is required to get the value of a field.")]
+        public Int32 GetBacklight() {
+            byte[] bytes;
+            if (SendTextCommand('b', "", out bytes)) {
+                var percentText = System.Text.ASCIIEncoding.ASCII.GetString(bytes);
+                int percent;
+                if (int.TryParse(percentText, NumberStyles.Integer, CultureInfo.InvariantCulture, out percent)) {
+                    if ((percent >= 0) && (percent <= 100)) {
+                        return percent;
+                    }
+                }
+            }
+            return -1;
+        }
+
         /// <summary>
         /// Temporarily Sets backlight.
         /// Returns true if operation succeeded.
         /// </summary>
         /// <param name="percent">Percent value.</param>
-        /// <param name="save">If true, value should be saved as a default.</param>
         /// <exception cref="System.ArgumentOutOfRangeException">Percent value must be between 0 and 100.</exception>
         public Boolean SetBacklight(Int32 percent) {
             return SetBacklight(percent, false);

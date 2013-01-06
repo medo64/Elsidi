@@ -50,6 +50,7 @@
             this.nudBacklight.Size = new System.Drawing.Size(60, 22);
             this.nudBacklight.TabIndex = 11;
             this.nudBacklight.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            this.nudBacklight.ValueChanged += new System.EventHandler(this.nudBacklight_ValueChanged);
             // 
             // lblContrast
             // 
@@ -69,14 +70,16 @@
             this.nudContrast.TabIndex = 9;
             this.nudContrast.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             this.nudContrast.Value = new decimal(new int[] {
-            90,
+            50,
             0,
             0,
             0});
+            this.nudContrast.ValueChanged += new System.EventHandler(this.nudContrast_ValueChanged);
             // 
             // btnSave
             // 
             this.btnSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnSave.DialogResult = System.Windows.Forms.DialogResult.OK;
             this.btnSave.Location = new System.Drawing.Point(14, 80);
             this.btnSave.Margin = new System.Windows.Forms.Padding(3, 15, 3, 3);
             this.btnSave.Name = "btnSave";
@@ -118,6 +121,7 @@
             this.ShowInTaskbar = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Adjust";
+            this.Load += new System.EventHandler(this.Form_Load);
             ((System.ComponentModel.ISupportInitialize)(this.nudBacklight)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudContrast)).EndInit();
             this.ResumeLayout(false);
