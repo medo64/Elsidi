@@ -17,7 +17,6 @@ Firmware/Source/dist/*
 Firmware/Source/funclist
 
 Hardware/Datasheets/*
-Hardware/Releases/*
 Hardware/Research/*
 
 Software/*/Source/*.suo
