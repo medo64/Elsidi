@@ -6,7 +6,7 @@ using System.IO.Ports;
 using System.Windows.Forms;
 
 namespace TestElsidi {
-    public partial class MainForm : Form {
+    internal partial class MainForm : Form {
         public MainForm() {
             InitializeComponent();
             this.Font = SystemFonts.MessageBoxFont;

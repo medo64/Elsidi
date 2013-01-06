@@ -20,6 +20,7 @@ Hardware/Datasheets/*
 Hardware/Releases/*
 Hardware/Research/*
 
+Software/*/Binaries/*
 Software/*/Source/*.suo
 Software/*/Source/*/bin/*
 Software/*/Source/*/obj/*

@@ -3,7 +3,7 @@ using System.Drawing;
 using System.Windows.Forms;
 
 namespace TestElsidi {
-    public partial class AdjustForm : Form {
+    internal partial class AdjustForm : Form {
         public AdjustForm(Elsidi device) {
             InitializeComponent();
             this.Font = SystemFonts.MessageBoxFont;
