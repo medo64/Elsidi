@@ -58,7 +58,7 @@ bit readPercent(unsigned char *value, unsigned char *charCount) {
             case READPERCENT_STATE_NUMBER: {
                 if ((data >= '0') && (data <='9')) {
                     unsigned char digitValue = (data - '0');
-                    if ((*value < 10) || ((*value == 10) && (data == 0))) {
+                    if ((*value < 10) || ((*value == 10) && (digitValue == 0))) {
                         *value = (*value * 10) + digitValue;
                     } else {
                         state = READPERCENT_STATE_INVALID;
