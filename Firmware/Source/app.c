@@ -3,10 +3,10 @@
 
 #include "communication.h"
 #include "config.h"
+#include "defaults.h"
 #include "eeprom.h"
 #include "lcd.h"
 #include "settings.h"
-
 
 #define LED    LATC0
 
@@ -61,10 +61,15 @@ void init() {
     TRISC1 = 0; //turn on backlight
 }
 
-
 void main() {
     init();
     settings_init();
+
+    if (isResetToDefaultsRequired()) {
+        resetToDefaults();
+        while (1); //wait for reset
+    }
+
     communication_init();
 
     
