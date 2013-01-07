@@ -28,4 +28,12 @@ void lcd_useE(unsigned char mask);
 void lcd_writeData(unsigned char data);
 void lcd_writeInstruction(unsigned char data);
 
+bit lcd_isDisplayOn();
+bit lcd_isCursorOn();
+bit lcd_isCursorBlink();
+
+void lcd_setDisplayOn(unsigned char state);
+void lcd_setCursorOn(unsigned char state);
+void lcd_setCursorBlinkOn(unsigned char state);
+
 #endif

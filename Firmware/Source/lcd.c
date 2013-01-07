@@ -4,6 +4,8 @@
 
 unsigned char SelectedE = 0x03;
 unsigned char InterfaceWidth = 8;
+unsigned char DisplayState = 0;
+
 
 void pulseE() {
     if (SelectedE == 0x03) {
@@ -73,6 +75,8 @@ void lcd_writeInstruction(unsigned char data) {
     if ((data == 0x01) || (data == 0x02))  {
         CurrLine = 0;
         __delay_ms(2);
+    } else if ((data & 0xF8) == 0x08) { //Display ON/OFF
+        DisplayState = data & 0x07;
     } else {
         __delay_us(25);
     }
@@ -166,4 +170,33 @@ void lcd_reinit(unsigned char width) {
 void lcd_init(unsigned char width) {
     __delay_ms(50);
     lcd_reinit(width);
+}
+
+
+bit lcd_isDisplayOn() {
+    return ((DisplayState & 0x04) != 0);
+}
+
+bit lcd_isCursorOn() {
+    return ((DisplayState & 0x02) != 0);
+}
+
+bit lcd_isCursorBlink() {
+    return ((DisplayState & 0x01) != 0);
+}
+
+
+void lcd_setDisplayOn(unsigned char state) {
+    unsigned char newState = (DisplayState & 0x03) | (state ? 0x04 : 0x00);
+    lcd_writeInstruction(0x08 | newState);
+}
+
+void lcd_setCursorOn(unsigned char state) {
+    unsigned char newState = (DisplayState & 0x05) | (state ? 0x02 : 0x00);
+    lcd_writeInstruction(0x08 | newState);
+}
+
+void lcd_setCursorBlinkOn(unsigned char state) {
+    unsigned char newState = (DisplayState & 0x06) | (state ? 0x01 : 0x00);
+    lcd_writeInstruction(0x08 | newState);
 }

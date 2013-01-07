@@ -184,6 +184,60 @@ void processByte(unsigned char data) {
                     }
                 } break;
 
+                case '*': { //set display
+                    unsigned char cmdData = readByte();
+                    if ((cmdData == 0x0A) || (cmdData == 0x0D)) {
+                        writeByte(lcd_isDisplayOn() ? '+' : '-');
+                        data = 0x0A; //valid text command will result in LF.
+                    } else {
+                        if (readNothing()) {
+                            if (cmdData == '+') {
+                                lcd_setDisplayOn(1);
+                                data = 0x0A; //valid text command will result in LF.
+                            } else if (cmdData == '-') {
+                                lcd_setDisplayOn(0);
+                                data = 0x0A; //valid text command will result in LF.
+                            }
+                        }
+                    }
+                } break;
+
+                case '$': { //set cursor
+                    unsigned char cmdData = readByte();
+                    if ((cmdData == 0x0A) || (cmdData == 0x0D)) {
+                        writeByte(lcd_isCursorOn() ? '+' : '-');
+                        data = 0x0A; //valid text command will result in LF.
+                    } else {
+                        if (readNothing()) {
+                            if (cmdData == '+') {
+                                lcd_setCursorOn(1);
+                                data = 0x0A; //valid text command will result in LF.
+                            } else if (cmdData == '-') {
+                                lcd_setCursorOn(0);
+                                data = 0x0A; //valid text command will result in LF.
+                            }
+                        }
+                    }
+                } break;
+
+                case '!': { //set cursor blink
+                    unsigned char cmdData = readByte();
+                    if ((cmdData == 0x0A) || (cmdData == 0x0D)) {
+                        writeByte(lcd_isCursorBlink() ? '+' : '-');
+                        data = 0x0A; //valid text command will result in LF.
+                    } else {
+                        if (readNothing()) {
+                            if (cmdData == '+') {
+                                lcd_setCursorBlinkOn(1);
+                                data = 0x0A; //valid text command will result in LF.
+                            } else if (cmdData == '-') {
+                                lcd_setCursorBlinkOn(0);
+                                data = 0x0A; //valid text command will result in LF.
+                            }
+                        }
+                    }
+                } break;
+
                 case 'b':
                 case 'B': { //set backlight
                     unsigned char percent = settings_getBacklight();
