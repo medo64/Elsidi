@@ -71,6 +71,12 @@ namespace TestElsidi {
             Debug.WriteLine(sw.ElapsedMilliseconds);
         }
 
+        private void btnClock_Click(object sender, EventArgs e) {
+            using (var frm = new ClockForm(this.Device)) {
+                frm.ShowDialog(this);
+            }
+        }
+
         private void btnStress_Click(object sender, EventArgs e) {
             var sb = new StringBuilder();
             var text = sb.ToString();
@@ -100,6 +106,7 @@ namespace TestElsidi {
                 cmbSerialPort.Enabled = false;
                 txtText.Enabled = true;
                 btnSend.Enabled = true;
+                btnClock.Enabled = true;
                 btnStress.Enabled = true;
                 btnAdjust.Enabled = true;
                 this.AcceptButton = null;
@@ -108,6 +115,7 @@ namespace TestElsidi {
                 cmbSerialPort.Enabled = true;
                 txtText.Enabled = false;
                 btnSend.Enabled = false;
+                btnClock.Enabled = false;
                 btnStress.Enabled = false;
                 btnAdjust.Enabled = false;
                 this.AcceptButton = btnConnect;
