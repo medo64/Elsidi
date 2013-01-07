@@ -51,6 +51,7 @@ PARTS
 
   o R 1K, 0.1W (0603)                                                           DK:CR0603-FX-1001ELF
   - R3                                  LED
+  - R4                                  MOSFET pull-up
 
   o U PIC16F1516 (SSOP-28)                                                      DK:PIC16F1516-I/SS-ND
   - U1
