@@ -1,5 +1,5 @@
 #include "communication.h"
-
+#include "config.h"
 #include "lcd.h"
 #include "settings.h"
 #include "uart.h"

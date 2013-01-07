@@ -1,20 +1,5 @@
-#include "config.h"
-
 #ifndef LCD_H
 #define LCD_H
-
-#define LCD_RS LATB3
-#define LCD_RW LATB4
-#define LCD_E1 LATB5
-#define LCD_E2 LATB2
-#define LCD_D0 LATB0
-#define LCD_D1 LATA1
-#define LCD_D2 LATA2
-#define LCD_D3 LATA3
-#define LCD_D4 LATA4
-#define LCD_D5 LATA5
-#define LCD_D6 LATA6
-#define LCD_D7 LATA7
 
 void lcd_clearDisplay();
 void lcd_init(unsigned char width);

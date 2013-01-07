@@ -1,5 +1,6 @@
 #include "lcd.h"
 #include <pic.h>
+#include "config.h"
 
 
 unsigned char SelectedE = 0x03;

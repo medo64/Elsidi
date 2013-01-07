@@ -1,30 +1,28 @@
 #include "defaults.h"
 #include <pic.h>
-#include "settings.h"
+#include "config.h"
 #include "lcd.h"
-
-
-#define bitSet(var, bitno)              ((var) |= 1UL << (bitno))
-#define bitClear(var, bitno)            ((var) &= ~(1UL << (bitno)))
+#include "settings.h"
 
 
 bit isResetToDefaultsRequired() {
     unsigned char isShorted = 1;
 
-    TRISB0 = 1; //make DB0 an input
+    LCD_D0_TRIS = 1; //make DB0 an input
 
-    LATA1 = 0;
+    LCD_D1 = 0;
     __delay_ms(1);
-    if (PORTBbits.RB0 != 0) { isShorted = 0; }
+    if (LCD_D0_PORT != 0) { isShorted = 0; }
 
-    LATA1 = 1;
+    LCD_D1 = 1;
     __delay_ms(1);
-    if (PORTBbits.RB0 != 1) { isShorted = 0; }
+    if (LCD_D0_PORT != 1) { isShorted = 0; }
 
-    TRISB0 = 0; //DB0 is output again
+    LCD_D0_TRIS = 0; //DB0 is output again
 
     return isShorted;
 }
+
 
 void resetToDefaults() {
     settings_setBacklight(1);
