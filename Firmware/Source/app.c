@@ -69,7 +69,7 @@ void main() {
 
     
     LED = 1;
-    lcd_init();
+    lcd_init(settings_getInterface());
 
     int i = 0;
     while (ELSIDI_NAME[i] != '\0') {

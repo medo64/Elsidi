@@ -2,16 +2,17 @@
 #include <pic.h>
 
 
-unsigned char selectedE = 0x03;
+unsigned char SelectedE = 0x03;
+unsigned char InterfaceWidth = 8;
 
 void pulseE() {
-    if (selectedE == 0x03) {
+    if (SelectedE == 0x03) {
         LCD_E1 = 1;
         LCD_E2 = 1;
         __delay_us(5);
         LCD_E1 = 0;
         LCD_E2 = 0;
-    } else if (selectedE == 0x02) {
+    } else if (SelectedE == 0x02) {
         LCD_E2 = 1;
         __delay_us(5);
         LCD_E2 = 0;
@@ -23,15 +24,29 @@ void pulseE() {
     __delay_us(20);
 }
 
-void setDB(unsigned char data) {
-    if (data & 0x01) { LCD_D0 = 1; } else { LCD_D0 = 0; }
-    if (data & 0x02) { LCD_D1 = 1; } else { LCD_D1 = 0; }
-    if (data & 0x04) { LCD_D2 = 1; } else { LCD_D2 = 0; }
-    if (data & 0x08) { LCD_D3 = 1; } else { LCD_D3 = 0; }
-    if (data & 0x10) { LCD_D4 = 1; } else { LCD_D4 = 0; }
-    if (data & 0x20) { LCD_D5 = 1; } else { LCD_D5 = 0; }
-    if (data & 0x40) { LCD_D6 = 1; } else { LCD_D6 = 0; }
-    if (data & 0x80) { LCD_D7 = 1; } else { LCD_D7 = 0; }
+void execute(unsigned char data) {
+    if (InterfaceWidth == 4) {
+        if (data & 0x80) { LCD_D7 = 1; } else { LCD_D7 = 0; }
+        if (data & 0x40) { LCD_D6 = 1; } else { LCD_D6 = 0; }
+        if (data & 0x20) { LCD_D5 = 1; } else { LCD_D5 = 0; }
+        if (data & 0x10) { LCD_D4 = 1; } else { LCD_D4 = 0; }
+        pulseE();
+        if (data & 0x08) { LCD_D7 = 1; } else { LCD_D7 = 0; }
+        if (data & 0x04) { LCD_D6 = 1; } else { LCD_D6 = 0; }
+        if (data & 0x02) { LCD_D5 = 1; } else { LCD_D5 = 0; }
+        if (data & 0x01) { LCD_D4 = 1; } else { LCD_D4 = 0; }
+        pulseE();
+    } else { //assume 8-bit
+        if (data & 0x80) { LCD_D7 = 1; } else { LCD_D7 = 0; }
+        if (data & 0x40) { LCD_D6 = 1; } else { LCD_D6 = 0; }
+        if (data & 0x20) { LCD_D5 = 1; } else { LCD_D5 = 0; }
+        if (data & 0x10) { LCD_D4 = 1; } else { LCD_D4 = 0; }
+        if (data & 0x08) { LCD_D3 = 1; } else { LCD_D3 = 0; }
+        if (data & 0x04) { LCD_D2 = 1; } else { LCD_D2 = 0; }
+        if (data & 0x02) { LCD_D1 = 1; } else { LCD_D1 = 0; }
+        if (data & 0x01) { LCD_D0 = 1; } else { LCD_D0 = 0; }
+        pulseE();
+    }
 }
 
 
@@ -54,8 +69,7 @@ void lcd_nextLine() {
 void lcd_writeInstruction(unsigned char data) {
     LCD_RS = 0;
     LCD_RW = 0;
-    setDB(data);
-    pulseE();
+    execute(data);
     if ((data == 0x01) || (data == 0x02))  {
         CurrLine = 0;
         __delay_ms(2);
@@ -80,8 +94,7 @@ void lcd_setAddress(unsigned char address) {
 void lcd_writeData(unsigned char data) {
     LCD_RS = 1;
     LCD_RW = 0;
-    setDB(data);
-    pulseE();
+    execute(data);
 }
 
 
@@ -96,20 +109,61 @@ void lcd_setBacklightPwm(unsigned char percent) {
 }
 
 void lcd_useE(unsigned char mask) {
-    selectedE = mask;
+    SelectedE = mask;
 }
 
 
-void lcd_init() {
-    lcd_writeInstruction(0x38); //Function set (11****)
+void lcd_initInstruction() {
+    LCD_RS = 0;
+    LCD_RW = 0;
+    LCD_D7 = 0;
+    LCD_D6 = 0;
+    LCD_D5 = 1;
+    LCD_D4 = 1;
+    LCD_D3 = 0;
+    LCD_D2 = 0;
+    LCD_D1 = 0;
+    LCD_D0 = 0;
+    pulseE();
+}
+
+void lcd_initInterfaceWidth(unsigned char width) {
+    LCD_RS = 0;
+    LCD_RW = 0;
+    LCD_D7 = 0;
+    LCD_D6 = 0;
+    LCD_D5 = 1;
+    LCD_D4 = (width == 4) ? 0 : 1;
+    LCD_D3 = 0;
+    LCD_D2 = 0;
+    LCD_D1 = 0;
+    LCD_D0 = 0;
+    pulseE();
+    InterfaceWidth = width;
+}
+
+void lcd_reinit(unsigned char width) {
+    lcd_initInstruction();      //Function set (0011 ****)
     __delay_ms(10);             //additional delay
-    lcd_writeInstruction(0x38); //Function set (11****) - it really needs to be set second time (of four)
-    lcd_writeInstruction(0x38); //Function set (11****) - it really needs to be set third time (of four)
-    lcd_writeInstruction(0x38); //Function set (111000) set 8-bit operation, 2-line display and 5x8 font
-    lcd_writeInstruction(0x08); //Display off (1000) - turn off display
-    lcd_writeInstruction(0x01); //clear screen
-    lcd_writeInstruction(0x06); //Entry mode set (110)
-    lcd_writeInstruction(0x14); //sets both address and shift incrementing by one
-    lcd_writeInstruction(0x02); //Return home (10)
-    lcd_writeInstruction(0x0C); //Display control (1100) - turn on display
+    lcd_initInstruction();      //Function set (0011 ****) - it really needs to be set second time (of four)
+    __delay_ms(1);              //additional delay
+    lcd_initInstruction();      //Function set (0011 ****) - it really needs to be set third time (of four)
+    __delay_ms(1);              //additional delay
+    lcd_initInterfaceWidth(width);
+    if (width == 4) {
+        lcd_writeInstruction(0x28); //Function set (0010 1000) set 4-bit operation, 2-line display and 5x8 font
+    } else {
+        lcd_writeInstruction(0x38); //Function set (0011 1000) set 8-bit operation, 2-line display and 5x8 font
+    }
+    lcd_writeInstruction(0x08); //Display off (0000 1000) - turn off display
+    lcd_writeInstruction(0x01); //Clear screen
+    lcd_writeInstruction(0x06); //Entry mode set (0000 0110)
+    lcd_writeInstruction(0x14); //Sets both address and shift incrementing by one
+    lcd_writeInstruction(0x02); //Return home (0000 0010)
+    lcd_writeInstruction(0x0C); //Display control (0000 1100) - turn on display
+}
+
+void lcd_init(unsigned char width) {
+    __delay_ms(50);
+    lcd_reinit(width);
 }

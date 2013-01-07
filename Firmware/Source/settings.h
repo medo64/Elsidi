@@ -11,4 +11,8 @@ unsigned char settings_getBacklight();
 void settings_setBacklight(unsigned char value);
 void settings_writeBacklight();
 
+unsigned char settings_getInterface();
+void settings_setInterface(unsigned char value);
+void settings_writeInterface();
+
 #endif

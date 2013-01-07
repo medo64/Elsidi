@@ -17,10 +17,10 @@
 #define LCD_D7 LATA7
 
 void lcd_clearDisplay();
-void lcd_init();
+void lcd_init(unsigned char width);
+void lcd_reinit(unsigned char width);
 void lcd_nextLine();
 void lcd_returnHome();
-void lcd_setAddress(unsigned char address);
 void lcd_setAddress(unsigned char address);
 void lcd_setBacklightPwm(unsigned char percent);
 void lcd_setContrastPwm(unsigned char percent);

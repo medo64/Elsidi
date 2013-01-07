@@ -29,11 +29,11 @@ bit readNothing() {
 }
 
 
-#define READPERCENT_STATE_DEFAULT 0
-#define READPERCENT_STATE_NUMBER  1
-#define READPERCENT_STATE_INCREMENT 2
-#define READPERCENT_STATE_DECREMENT 3
-#define READPERCENT_STATE_INVALID 255
+#define READPERCENT_STATE_DEFAULT     0
+#define READPERCENT_STATE_NUMBER      1
+#define READPERCENT_STATE_INCREMENT   2
+#define READPERCENT_STATE_DECREMENT   3
+#define READPERCENT_STATE_INVALID   255
 
 bit readPercent(unsigned char *value, unsigned char *charCount) {
     *charCount = 0;
@@ -89,6 +89,34 @@ bit readPercent(unsigned char *value, unsigned char *charCount) {
 }
 
 
+bit readSmallNumber(unsigned char *value, unsigned char *charCount) { //0 to 100
+    *charCount = 0;
+    unsigned char isValid = 1;
+    unsigned char newValue = 0;
+    while(1) {
+        unsigned char data = readByte();
+        if ((data==0x0A) || (data==0x0D)) { break; } //both LF and CR are supported
+        if (*charCount < 255) { *charCount += 1; }
+        if (isValid && (data >= '0') && (data <= '9')) {
+           unsigned char digitValue = (data - '0');
+           if ((newValue < 10) || ((newValue == 10) && (digitValue == 0))) {
+               newValue = (newValue * 10) + digitValue;
+           } else {
+               isValid = 0; //number is 10000 or larger
+           }
+        } else {
+            isValid = 0;
+        }
+    }
+    if (isValid) {
+        if (*charCount > 0) { *value = newValue; }
+        return 1;
+    } else {
+        return 0;
+    }
+}
+
+
 void writePercent(unsigned char value) {
     unsigned char d1 = value / 100;
     unsigned char d2 = (value / 10) % 10;
@@ -107,6 +135,21 @@ void writePercent(unsigned char value) {
     }
 }
 
+void writeNumber(int value) {
+    int currPosition = 10000;
+    unsigned char leadingZero = 1;
+    while (currPosition > 0) {
+        int digit = (value / currPosition) % 10;
+        if ((digit == 0) && leadingZero) {
+        } else {
+            writeByte('0' + (unsigned char)digit);
+            leadingZero = 0;
+        }
+        currPosition /= 10;
+    }
+    if (leadingZero) { writeByte('0'); }
+}
+
 
 void processByte(unsigned char data) {
     switch (data) {
@@ -116,7 +159,7 @@ void processByte(unsigned char data) {
                 case 0x0A:
                 case 0x0D: { //clear display
                     lcd_clearDisplay();
-                    data = 0x0A; //valid multiline command will result in LF.
+                    data = 0x0A; //valid text command will result in LF.
                 } break;
 
                 case '?': { //ID
@@ -126,7 +169,7 @@ void processByte(unsigned char data) {
                             writeByte(ELSIDI_VERSION[i]);
                             i++;
                         }
-                        data = 0x0A; //valid multiline command will result in LF.
+                        data = 0x0A; //valid text command will result in LF.
                     }
                 } break;
 
@@ -135,12 +178,14 @@ void processByte(unsigned char data) {
                         settings_init();
                         lcd_setBacklightPwm(settings_getBacklight());
                         lcd_setContrastPwm(settings_getContrast());
+                        lcd_reinit(settings_getInterface());
                         lcd_useE(0x03); //use both connectors for same output
-                        data = 0x0A; //valid multiline command will result in LF.
+                        data = 0x0A; //valid text command will result in LF.
                     }
                 } break;
 
-                case 'b': { //set backlight
+                case 'b':
+                case 'B': { //set backlight
                     unsigned char percent = settings_getBacklight();
                     unsigned char charCount;
                     if (readPercent(&percent, &charCount)) {
@@ -150,24 +195,13 @@ void processByte(unsigned char data) {
                             lcd_setBacklightPwm(percent);
                             settings_setBacklight(percent);
                         }
-                        data = 0x0A; //valid multiline command will result in LF.
+                        data = 0x0A; //valid text command will result in LF.
+                        if (cmd == 'C') { settings_writeBacklight(); }
                     }
                 } break;
 
-                case 'B': { //store given backlight as a default
-                    unsigned char percent = settings_getBacklight();
-                    unsigned char charCount;
-                    if (readPercent(&percent, &charCount)) {
-                        if (charCount > 0) {
-                            lcd_setBacklightPwm(percent);
-                            settings_setBacklight(percent);
-                        }
-                        settings_writeBacklight();
-                        data = 0x0A; //valid multiline command will result in LF.
-                    }
-                } break;
-
-                case 'c': { //set contrast
+                case 'c':
+                case 'C': { //set contrast
                     unsigned char percent = settings_getContrast();
                     unsigned char charCount;
                     if (readPercent(&percent, &charCount)) {
@@ -177,20 +211,31 @@ void processByte(unsigned char data) {
                             lcd_setContrastPwm(percent);
                             settings_setContrast(percent);
                         }
-                        data = 0x0A; //valid multiline command will result in LF.
+                        data = 0x0A; //valid text command will result in LF.
+                        if (cmd == 'C') { settings_writeContrast(); }
                     }
                 } break;
 
-                case 'C': { //store given contrast as a default
-                    unsigned char percent = settings_getContrast();
+                case 'i':
+                case 'I': { //set interface width
+                    unsigned char interface = settings_getInterface();
                     unsigned char charCount;
-                    if (readPercent(&percent, &charCount)) {
-                        if (charCount > 0) {
-                            lcd_setContrastPwm(percent);
-                            settings_setContrast(percent);
+                    if (readSmallNumber(&interface, &charCount)) {
+                        if (charCount == 0) { //report back
+                            writeNumber(interface);
+                            data = 0x0A; //valid text command will result in LF.
+                        } else if (interface == 4) {
+                            settings_setInterface(4);
+                            lcd_reinit(4);
+                            data = 0x0A; //valid text command will result in LF.
+                        } else if (interface == 8) {
+                            settings_setInterface(8);
+                            lcd_reinit(8);
+                            data = 0x0A; //valid text command will result in LF.
                         }
-                        settings_writeContrast();
-                        data = 0x0A; //valid multiline command will result in LF.
+                        if ((cmd == 'I') && (data == 0x0A)) {
+                            settings_writeInterface();
+                        }
                     }
                 } break;
 
