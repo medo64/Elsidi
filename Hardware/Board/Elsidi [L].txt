@@ -43,7 +43,7 @@ PARTS
   o Q DMP2215L-7 (SOT23-3)                                                      DK:DMP2215LDICT-ND
   - Q1                                  Backlight PWM
 
-  o R 2.2, 5%, 2W (2512)                                                        DK:CRM2512-JW-2R2ELFCT-ND
+  o R 2.2, 5%, 1W (2512)                                                        DK:A102519CT-ND
   - R1                                  Low-pass filter (backlight)
 
   o R 220, 0.1W (0603)                                                          DK:RMCF0603JT220RCT-ND
