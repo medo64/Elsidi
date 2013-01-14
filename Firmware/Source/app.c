@@ -38,7 +38,7 @@ void main() {
     lcd_setBacklightPwm(settings_getBacklight());
 
     __delay_ms(1000);
-    lcd_clearDisplay();
+    lcd_reinit(settings_getInterface(), settings_getDeviceCount());
     LED = 0;
 
     while (1) {

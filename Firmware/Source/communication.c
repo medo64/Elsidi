@@ -195,7 +195,6 @@ void processByte(unsigned char data) {
                         lcd_setBacklightPwm(settings_getBacklight());
                         lcd_setContrastPwm(settings_getContrast());
                         lcd_reinit(settings_getInterface(), settings_getDeviceCount());
-                        lcd_useE(0x03); //use both connectors for same output
                         data = SUCCESS;
                     }
                 } break;
