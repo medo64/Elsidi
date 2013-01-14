@@ -250,7 +250,7 @@ void processByte(unsigned char data) {
                             settings_setBacklight(percent);
                         }
                         data = 0x0A; //valid text command will result in LF.
-                        if (cmd == 'C') { settings_writeBacklight(); }
+                        if (cmd == 'B') { settings_writeBacklight(); }
                     }
                 } break;
 
