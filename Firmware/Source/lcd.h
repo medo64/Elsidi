@@ -4,7 +4,7 @@
 void lcd_clearDisplay();
 void lcd_init(unsigned char width, unsigned char deviceCount);
 void lcd_reinit(unsigned char width, unsigned char deviceCount);
-void lcd_nextLine();
+bit lcd_nextLine();
 void lcd_returnHome();
 void lcd_setAddress(unsigned char address);
 void lcd_setBacklightPwm(unsigned char percent);

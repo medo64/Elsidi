@@ -56,7 +56,7 @@ void execute(unsigned char data) {
 
 char CurrLine = 0;
 
-void lcd_nextLine() {
+bit lcd_nextLine() {
     CurrLine += 1;
     if (CurrLine <= 3) {
         if (DeviceCount == 2) {
@@ -64,25 +64,28 @@ void lcd_nextLine() {
                 case 1:
                     SelectedE = 0x01;
                     lcd_setAddress(0x40);
-                    break;
+                    return 1;
                 case 2:
                     SelectedE = 0x02;
                     lcd_setAddress(0x00);
-                    break;
+                    return 1;
                 case 3:
                     SelectedE = 0x02;
                     lcd_setAddress(0x40);
-                    break;
+                    return 1;
+                default: return 0;
             }
         } else {
             switch (CurrLine) {
-                case 1: lcd_setAddress(0x40); break;
-                case 2: lcd_setAddress(0x14); break;
-                case 3: lcd_setAddress(0x54); break;
+                case 1: lcd_setAddress(0x40); return 1;
+                case 2: lcd_setAddress(0x14); return 1;
+                case 3: lcd_setAddress(0x54); return 1;
+                default: return 0;
             }
         }
     } else {
         CurrLine = 4; //just reset it to one line above highest and do nothing
+        return 0;
     }
 }
 
@@ -102,12 +105,11 @@ void lcd_writeInstruction(unsigned char data) {
 }
 
 void lcd_clearDisplay() {
+    SelectedE = 0x03;
+    lcd_writeInstruction(0x01);
     if (DeviceCount == 2) {
         SelectedE = 0x01;
-    } else {
-        SelectedE = 0x03; //just keep both E lines in same state.
     }
-    lcd_writeInstruction(0x01);
 }
 
 void lcd_returnHome() {

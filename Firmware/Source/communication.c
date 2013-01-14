@@ -320,29 +320,36 @@ void processByte(unsigned char data) {
         } break;
 
         case 0x09: { //HT: Next line
-            lcd_nextLine();
+            if (lcd_nextLine()) {
+                data = 0x0A; //valid command will result in LF.
+            }
         } break;
 
         case 0x0A:   //LF: Return home
         case 0x0D: { //CR: Return home
             lcd_returnHome();
+            data = 0x0A; //valid command will result in LF.
         } break;
 
         case 0x0B: { //VT: Clear display
             lcd_clearDisplay();
+            data = 0x0A; //valid command will result in LF.
         } break;
 
         case 0x0C: { //FF: LCD instruction mode
             unsigned char instruction = readByte();
             lcd_writeInstruction(instruction);
+            data = 0x0A; //valid command will result in LF.
         } break;
 
         case 0x0E: { //SO: Select secondary display
             lcd_useE(0x02);
+            data = 0x0A; //valid command will result in LF.
         } break;
 
         case 0x0F: { //SI: Select primary display
             lcd_useE(0x01);
+            data = 0x0A; //valid command will result in LF.
         } break;
 
         default:
