@@ -4,6 +4,17 @@
 #include "settings.h"
 #include "uart.h"
 
+#define BS 0x08 //Return home
+#define HT 0x09 //Command mode
+#define LF 0x0A //Next line
+#define VT 0x0B //Clear display
+#define FF 0x0C //LCD instruction mode
+#define CR 0x0D //Next line
+#define SO 0x0E //Select secondary display (E2).
+#define SI 0x0F //Select primary display (E1).
+
+#define SUCCESS LF
+
 
 void communication_init() {
     uart_init(9600);
@@ -22,7 +33,7 @@ bit readNothing() {
     unsigned char isValid = 1;
     while(1) {
         unsigned char data = readByte();
-        if ((data==0x0A) || (data==0x0D)) { break; } //both LF and CR are supported
+        if ((data == CR) || (data == LF)) { break; } //both CR and LF are supported
         isValid = 0;
     }
     return (isValid) ? 1 : 0;
@@ -40,7 +51,7 @@ bit readPercent(unsigned char *value, unsigned char *charCount) {
     unsigned char state = READPERCENT_STATE_DEFAULT;
     while(1) {
         unsigned char data = readByte();
-        if ((data==0x0A) || (data==0x0D)) { break; } //both LF and CR are supported
+        if ((data == CR) || (data == LF)) { break; } //both CR and LF are supported
         if (*charCount < 255) { *charCount += 1; }
         if (state == READPERCENT_STATE_DEFAULT) {
             if ((data >= '0') && (data <= '9')) {
@@ -95,7 +106,7 @@ bit readSmallNumber(unsigned char *value, unsigned char *charCount) { //0 to 100
     unsigned char newValue = 0;
     while(1) {
         unsigned char data = readByte();
-        if ((data==0x0A) || (data==0x0D)) { break; } //both LF and CR are supported
+        if ((data == CR) || (data == LF)) { break; } //both CR and LF are supported
         if (*charCount < 255) { *charCount += 1; }
         if (isValid && (data >= '0') && (data <= '9')) {
            unsigned char digitValue = (data - '0');
@@ -153,13 +164,18 @@ void writeNumber(int value) {
 
 void processByte(unsigned char data) {
     switch (data) {
-        case 0x08: { //BS: Command mode
+        case BS: { //Return home
+            lcd_returnHome();
+            data = SUCCESS;
+        } break;
+
+        case HT: { //Command mode
             unsigned char cmd = readByte();
             switch (cmd) {
-                case 0x0A:
-                case 0x0D: { //clear display
+                case CR:
+                case LF: { //clear display
                     lcd_clearDisplay();
-                    data = 0x0A; //valid text command will result in LF.
+                    data = SUCCESS;
                 } break;
 
                 case '?': { //ID
@@ -169,7 +185,7 @@ void processByte(unsigned char data) {
                             writeByte(ELSIDI_VERSION[i]);
                             i++;
                         }
-                        data = 0x0A; //valid text command will result in LF.
+                        data = SUCCESS;
                     }
                 } break;
 
@@ -180,23 +196,23 @@ void processByte(unsigned char data) {
                         lcd_setContrastPwm(settings_getContrast());
                         lcd_reinit(settings_getInterface(), settings_getDeviceCount());
                         lcd_useE(0x03); //use both connectors for same output
-                        data = 0x0A; //valid text command will result in LF.
+                        data = SUCCESS;
                     }
                 } break;
 
                 case '*': { //set display
                     unsigned char cmdData = readByte();
-                    if ((cmdData == 0x0A) || (cmdData == 0x0D)) {
+                    if ((cmdData == CR) || (cmdData == LF)) {
                         writeByte(lcd_isDisplayOn() ? '+' : '-');
-                        data = 0x0A; //valid text command will result in LF.
+                        data = SUCCESS;
                     } else {
                         if (readNothing()) {
                             if (cmdData == '+') {
                                 lcd_setDisplayOn(1);
-                                data = 0x0A; //valid text command will result in LF.
+                                data = SUCCESS;
                             } else if (cmdData == '-') {
                                 lcd_setDisplayOn(0);
-                                data = 0x0A; //valid text command will result in LF.
+                                data = SUCCESS;
                             }
                         }
                     }
@@ -204,17 +220,17 @@ void processByte(unsigned char data) {
 
                 case '$': { //set cursor
                     unsigned char cmdData = readByte();
-                    if ((cmdData == 0x0A) || (cmdData == 0x0D)) {
+                    if ((cmdData == CR) || (cmdData == LF)) {
                         writeByte(lcd_isCursorOn() ? '+' : '-');
-                        data = 0x0A; //valid text command will result in LF.
+                        data = SUCCESS;
                     } else {
                         if (readNothing()) {
                             if (cmdData == '+') {
                                 lcd_setCursorOn(1);
-                                data = 0x0A; //valid text command will result in LF.
+                                data = SUCCESS;
                             } else if (cmdData == '-') {
                                 lcd_setCursorOn(0);
-                                data = 0x0A; //valid text command will result in LF.
+                                data = SUCCESS;
                             }
                         }
                     }
@@ -222,17 +238,17 @@ void processByte(unsigned char data) {
 
                 case '!': { //set cursor blink
                     unsigned char cmdData = readByte();
-                    if ((cmdData == 0x0A) || (cmdData == 0x0D)) {
+                    if ((cmdData == CR) || (cmdData == LF)) {
                         writeByte(lcd_isCursorBlink() ? '+' : '-');
-                        data = 0x0A; //valid text command will result in LF.
+                        data = SUCCESS;
                     } else {
                         if (readNothing()) {
                             if (cmdData == '+') {
                                 lcd_setCursorBlinkOn(1);
-                                data = 0x0A; //valid text command will result in LF.
+                                data = SUCCESS;
                             } else if (cmdData == '-') {
                                 lcd_setCursorBlinkOn(0);
-                                data = 0x0A; //valid text command will result in LF.
+                                data = SUCCESS;
                             }
                         }
                     }
@@ -249,7 +265,7 @@ void processByte(unsigned char data) {
                             lcd_setBacklightPwm(percent);
                             settings_setBacklight(percent);
                         }
-                        data = 0x0A; //valid text command will result in LF.
+                        data = SUCCESS;
                         if (cmd == 'B') { settings_writeBacklight(); }
                     }
                 } break;
@@ -265,7 +281,7 @@ void processByte(unsigned char data) {
                             lcd_setContrastPwm(percent);
                             settings_setContrast(percent);
                         }
-                        data = 0x0A; //valid text command will result in LF.
+                        data = SUCCESS;
                         if (cmd == 'C') { settings_writeContrast(); }
                     }
                 } break;
@@ -277,15 +293,15 @@ void processByte(unsigned char data) {
                     if (readSmallNumber(&deviceCount, &charCount)) {
                         if (charCount == 0) { //report back
                             writeNumber(deviceCount);
-                            data = 0x0A; //valid text command will result in LF.
+                            data = SUCCESS;
                         } else if (deviceCount == 1) {
                             settings_setInterface(1);
-                            data = 0x0A; //valid text command will result in LF.
+                            data = SUCCESS;
                         } else if (deviceCount == 2) {
                             settings_setDeviceCount(2);
-                            data = 0x0A; //valid text command will result in LF.
+                            data = SUCCESS;
                         }
-                        if (data == 0x0A) {
+                        if (data == SUCCESS) {
                             lcd_reinit(settings_getInterface(), settings_getDeviceCount());
                             if (cmd == 'D') { settings_writeDeviceCount(); }
                         }
@@ -300,15 +316,15 @@ void processByte(unsigned char data) {
                     if (readSmallNumber(&interface, &charCount)) {
                         if (charCount == 0) { //report back
                             writeNumber(interface);
-                            data = 0x0A; //valid text command will result in LF.
+                            data = SUCCESS;
                         } else if (interface == 4) {
                             settings_setInterface(4);
-                            data = 0x0A; //valid text command will result in LF.
+                            data = SUCCESS;
                         } else if (interface == 8) {
                             settings_setInterface(8);
-                            data = 0x0A; //valid text command will result in LF.
+                            data = SUCCESS;
                         }
-                        if (data == 0x0A) {
+                        if (data == SUCCESS) {
                             lcd_reinit(settings_getInterface(), settings_getDeviceCount());
                             if (cmd == 'I') { settings_writeInterface(); }
                         }
@@ -319,37 +335,34 @@ void processByte(unsigned char data) {
             }
         } break;
 
-        case 0x09: { //HT: Next line
+        case LF:   //Next line
+        case CR: { //Next line
             if (lcd_nextLine()) {
-                data = 0x0A; //valid command will result in LF.
+                data = SUCCESS;
+            } else {
+                data = CR; //cannot move to next line
             }
         } break;
 
-        case 0x0A:   //LF: Return home
-        case 0x0D: { //CR: Return home
-            lcd_returnHome();
-            data = 0x0A; //valid command will result in LF.
-        } break;
-
-        case 0x0B: { //VT: Clear display
+        case VT: { //Clear display
             lcd_clearDisplay();
-            data = 0x0A; //valid command will result in LF.
+            data = SUCCESS;
         } break;
 
-        case 0x0C: { //FF: LCD instruction mode
+        case FF: { //LCD instruction mode
             unsigned char instruction = readByte();
             lcd_writeInstruction(instruction);
-            data = 0x0A; //valid command will result in LF.
+            data = SUCCESS;
         } break;
 
-        case 0x0E: { //SO: Select secondary display
+        case SO: { //Select secondary display
             lcd_useE(0x02);
-            data = 0x0A; //valid command will result in LF.
+            data = SUCCESS;
         } break;
 
-        case 0x0F: { //SI: Select primary display
+        case SI: { //Select primary display
             lcd_useE(0x01);
-            data = 0x0A; //valid command will result in LF.
+            data = SUCCESS;
         } break;
 
         default:

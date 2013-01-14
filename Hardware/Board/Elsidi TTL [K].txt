@@ -104,42 +104,38 @@ USART INTERFACE
     Three wires are used - RXD, TXD and GND. All data is sent in ASCII at 9600
     baud, 1 stop bit and no parity.
 
-  Modes of operation
-
-    Text mode will write each character to LCD as it comes while holding RS
-    high. Instruction mode will write each character to LCD while holding RS
-    low (thus directly controlling LCD instructions). Text mode is always used
-    unless specified otherwise by command characters.
-
   Command characters
     
     Command characters are in ASCII range 0x08-0x0F (8-15 decimal). This range
     was selected since only CGRAM characters are here and they can be selected
-    within 0x00-0x07 range. Here is meaning of characters:
+    within 0x00-0x07 range.
 
-      0x08 BS   Reserved for future use.
-      0x09 HT   Next line.
-      0x0A LF   Execute.
-      0x0B VT   Reserved for future use.
-      0x0C FF   LCD instruction mode.
-      0x0D CR   Return home.
-      0x0E SO   Select secondary display.
-      0x0F SI   Select primary display.
+    Each command will result in either <LF> in case of success or it's own
+    character in case of failure.    
 
-    Next line (HT)
 
-      Moves LCD cursor to next line. It is included as helper method for
-      controlling display from command line. Display is always considered as
-      having four lines and stops will be at locations: 0x00 (first line), 0x40
-      (second line), 0x14 (third line) and 0x54 (fourth line). After fourth
-      line no movement will be made until line is resetted (via CR command).
+    Return home (BS)
 
-    Execute (LF)
-    
-      Executes saved buffer. During execution no further input is received.
-      When execution is done single LF will be sent to USART. After execution
-      is done, LCD will be left in text mode and control will be given to
-      primary display. 
+      Executes Return home LCD instruction. Result will be same as <FF> 0x02
+      was executed on both displays.
+
+    Command mode (HT)
+
+      Elsidi is in command mode. Command follows pattern <HT> <command>
+      [<data0> ... <dataN>] <LF>.
+
+    Next line (LF/CR)
+
+      Moves LCD cursor to next line. In case of normal display its locations
+      will be 0x00, 0x40, 0x14 and 0x54. In case of double display (e.g. 40x4)
+      stops will be at 0x00, 0x40, 0x00 (second controller), 0x40 (second
+      controller). After fourth line is selected command will perform no action
+      until Clear display is executed.
+
+    Clear display (VT)
+
+      Executes Clear display LCD instruction. Result will be same as <FF> 0x01
+      was executed on both displays.
 
     LCD instruction mode (FF)
 
@@ -147,13 +143,6 @@ USART INTERFACE
       LCD. Next character will be sent to LCD with RS signal kept low. E.g.,
       <FF> 0x02 will cause LCD to execute Return home command. After
       instruction character, all further characters are interpreted as usual.
-
-    Return home (CR)
-
-      Executes Return home LCD instruction. Result will be same as <FF> 0x02
-      was executed. It is included as helper method for controlling display
-      from command line. This command will also reset tab position back to
-      first line.
 
     Select secondary display (SO)
         
@@ -165,21 +154,3 @@ USART INTERFACE
         
       All further characters are executed via driving E1 line and thus
       controling primary display. 
-
-  LCD startup sequence
-    
-    Startup sequence is executed each time hardware is restarted. It is defined
-    within device's EEPROM in same format as one used for USART communication
-    and thus it must end with LF. After all is done, single LF will be sent to
-    USART. As execution is finished LCD control will be set to primary display
-    and text mode will be selected.
-
-  Normal behaviour
-    
-    All characters received are saved in buffer with optional echoing to
-    computer (echoing is currently not used but it must be expected). Once
-    execute command is detected (LF), all characters are  sent as data toward
-    LCD until one of command characters is encountered. After execution is done
-    LF is sent back to computer, state returns to text mode and buffer is ready
-    to receive new characters. If buffer size (208 bytes) is exceeded all
-    further characters except LF are ignored.

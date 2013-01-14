@@ -27,9 +27,9 @@ namespace TestElsidi {
             var line2 = time.ToShortDateString();
 
             this.Device.ReturnHome();
-            this.Device.SendText(line1);
+            this.Device.SendText(line1 + "    ");
             this.Device.NextLine();
-            this.Device.SendText(line2);
+            this.Device.SendText(line2 + "    ");
 
             lblClock.Text = line1 + "\r\t" + line2;
         }
