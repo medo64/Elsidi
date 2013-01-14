@@ -178,7 +178,7 @@ void processByte(unsigned char data) {
                         settings_init();
                         lcd_setBacklightPwm(settings_getBacklight());
                         lcd_setContrastPwm(settings_getContrast());
-                        lcd_reinit(settings_getInterface());
+                        lcd_reinit(settings_getInterface(), settings_getDeviceCount());
                         lcd_useE(0x03); //use both connectors for same output
                         data = 0x0A; //valid text command will result in LF.
                     }
@@ -270,6 +270,29 @@ void processByte(unsigned char data) {
                     }
                 } break;
 
+                case 'd':
+                case 'D': { //set number of devices (control of E1 and E2)
+                    unsigned char deviceCount = settings_getDeviceCount();
+                    unsigned char charCount;
+                    if (readSmallNumber(&deviceCount, &charCount)) {
+                        if (charCount == 0) { //report back
+                            writeNumber(deviceCount);
+                            data = 0x0A; //valid text command will result in LF.
+                        } else if (deviceCount == 1) {
+                            settings_setInterface(1);
+                            data = 0x0A; //valid text command will result in LF.
+                        } else if (deviceCount == 2) {
+                            settings_setDeviceCount(2);
+                            data = 0x0A; //valid text command will result in LF.
+                        }
+                        if (data == 0x0A) {
+                            lcd_reinit(settings_getInterface(), settings_getDeviceCount());
+                            if (cmd == 'D') { settings_writeDeviceCount(); }
+                        }
+                    }
+                } break;
+
+
                 case 'i':
                 case 'I': { //set interface width
                     unsigned char interface = settings_getInterface();
@@ -280,15 +303,14 @@ void processByte(unsigned char data) {
                             data = 0x0A; //valid text command will result in LF.
                         } else if (interface == 4) {
                             settings_setInterface(4);
-                            lcd_reinit(4);
                             data = 0x0A; //valid text command will result in LF.
                         } else if (interface == 8) {
                             settings_setInterface(8);
-                            lcd_reinit(8);
                             data = 0x0A; //valid text command will result in LF.
                         }
-                        if ((cmd == 'I') && (data == 0x0A)) {
-                            settings_writeInterface();
+                        if (data == 0x0A) {
+                            lcd_reinit(settings_getInterface(), settings_getDeviceCount());
+                            if (cmd == 'I') { settings_writeInterface(); }
                         }
                     }
                 } break;
@@ -301,12 +323,13 @@ void processByte(unsigned char data) {
             lcd_nextLine();
         } break;
 
-        case 0x0A:
-        case 0x0D: { //LF/CR: Return home
+        case 0x0A:   //LF: Return home
+        case 0x0D: { //CR: Return home
             lcd_returnHome();
         } break;
 
-        case 0x0B: { //VT: Reserved
+        case 0x0B: { //VT: Clear display
+            lcd_clearDisplay();
         } break;
 
         case 0x0C: { //FF: LCD instruction mode

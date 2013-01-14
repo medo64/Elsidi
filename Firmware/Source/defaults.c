@@ -31,8 +31,10 @@ void resetToDefaults() {
     settings_writeContrast();
     settings_setInterface(8);
     settings_writeInterface();
+    settings_setDeviceCount(1);
+    settings_writeDeviceCount();
 
-    lcd_init(4); //we cannot use 8-bit interface since DB0 and DB1 are shorted!
+    lcd_init(4, 1); //we cannot use 8-bit interface since DB0 and DB1 are shorted!
     lcd_writeData('D');
     lcd_writeData('E');
     lcd_writeData('F');

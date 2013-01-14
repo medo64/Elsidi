@@ -20,7 +20,7 @@ void main() {
     communication_init();
 
     
-    lcd_init(settings_getInterface());
+    lcd_init(settings_getInterface(), settings_getDeviceCount());
 
     int i = 0;
     while (ELSIDI_NAME[i] != '\0') {

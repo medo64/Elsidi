@@ -4,6 +4,7 @@
 
 
 unsigned char SelectedE = 0x03;
+unsigned char DeviceCount = 1;
 unsigned char InterfaceWidth = 8;
 unsigned char DisplayState = 0;
 
@@ -58,10 +59,27 @@ char CurrLine = 0;
 void lcd_nextLine() {
     CurrLine += 1;
     if (CurrLine <= 3) {
-        switch (CurrLine) {
-            case 1: lcd_setAddress(0x40); break;
-            case 2: lcd_setAddress(0x14); break;
-            case 3: lcd_setAddress(0x54); break;
+        if (DeviceCount == 2) {
+            switch (CurrLine) {
+                case 1:
+                    SelectedE = 0x01;
+                    lcd_setAddress(0x40);
+                    break;
+                case 2:
+                    SelectedE = 0x02;
+                    lcd_setAddress(0x00);
+                    break;
+                case 3:
+                    SelectedE = 0x02;
+                    lcd_setAddress(0x40);
+                    break;
+            }
+        } else {
+            switch (CurrLine) {
+                case 1: lcd_setAddress(0x40); break;
+                case 2: lcd_setAddress(0x14); break;
+                case 3: lcd_setAddress(0x54); break;
+            }
         }
     } else {
         CurrLine = 4; //just reset it to one line above highest and do nothing
@@ -84,10 +102,20 @@ void lcd_writeInstruction(unsigned char data) {
 }
 
 void lcd_clearDisplay() {
+    if (DeviceCount == 2) {
+        SelectedE = 0x01;
+    } else {
+        SelectedE = 0x03; //just keep both E lines in same state.
+    }
     lcd_writeInstruction(0x01);
 }
 
 void lcd_returnHome() {
+    if (DeviceCount == 2) {
+        SelectedE = 0x01;
+    } else {
+        SelectedE = 0x03; //just keep both E lines in same state.
+    }
     lcd_writeInstruction(0x02);
 }
 
@@ -147,7 +175,8 @@ void lcd_initInterfaceWidth(unsigned char width) {
     InterfaceWidth = width;
 }
 
-void lcd_reinit(unsigned char width) {
+void lcd_reinit(unsigned char width, unsigned char deviceCount) {
+    SelectedE = 0x03;
     lcd_initInstruction();      //Function set (0011 ****)
     __delay_ms(10);             //additional delay
     lcd_initInstruction();      //Function set (0011 ****) - it really needs to be set second time (of four)
@@ -166,11 +195,19 @@ void lcd_reinit(unsigned char width) {
     lcd_writeInstruction(0x14); //Sets both address and shift incrementing by one
     lcd_writeInstruction(0x02); //Return home (0000 0010)
     lcd_writeInstruction(0x0C); //Display control (0000 1100) - turn on display
+
+    CurrLine = 0;
+    DeviceCount = deviceCount;
+    if (DeviceCount == 2) {
+        SelectedE = 0x01;
+    } else {
+        SelectedE = 0x03; //just keep both E lines in same state.
+    }
 }
 
-void lcd_init(unsigned char width) {
+void lcd_init(unsigned char width, unsigned char deviceCount) {
     __delay_ms(50);
-    lcd_reinit(width);
+    lcd_reinit(width, deviceCount);
 }
 
 
