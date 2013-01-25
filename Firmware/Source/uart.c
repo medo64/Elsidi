@@ -1,6 +1,7 @@
 #include "uart.h"
-#include "pic.h"
+#include <pic.h>
 #include "config.h"
+
 
 void uart_init(int desiredBaudRate) {
     SPBRG   = (unsigned char)(_XTAL_FREQ / desiredBaudRate / 16 - 1);
