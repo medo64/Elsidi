@@ -12,7 +12,7 @@ void init() {
 
     ANSELA = 0;
     ANSELB = 0;
-    ANSELC = 0;
+    ANSELC = 0b00011000;
     TRISA = 0b01100000; // D7 -- -- D4 D3 D2 D1 D0
     TRISB = 0b11000000; // -- -- RS RW E1 D7 D6 D5
     TRISC = 0b11111110; // RX TX -- DA CL BL CT E2
