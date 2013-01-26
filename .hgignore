@@ -19,6 +19,7 @@ Firmware/Source/funclist
 Hardware/Datasheets/*
 Hardware/Research/*
 
+Software/*/Binaries/*
 Software/*/Source/*.suo
 Software/*/Source/*/bin/*
 Software/*/Source/*/obj/*

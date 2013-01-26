@@ -1,4 +1,4 @@
-#include <pic16f1936.h>
+#include <pic16f1516.h>
 #include <pic.h>
 #include "communication.h"
 #include "config.h"
@@ -13,13 +13,17 @@ void main() {
 
     if (isResetToDefaultsRequired()) {
         resetToDefaults();
-        while (1); //wait for reset
+        while (1) { //wait for reset
+            LED = 0;
+            __delay_ms(100);
+            LED = 1;
+            __delay_ms(100);
+        }
     }
 
     settings_init();
     communication_init();
 
-    
     lcd_init(settings_getInterface(), settings_getDeviceCount());
 
     int i = 0;

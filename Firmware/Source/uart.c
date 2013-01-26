@@ -4,34 +4,37 @@
 
 
 void uart_init(int desiredBaudRate) {
-    SPBRG   = (unsigned char)(_XTAL_FREQ / desiredBaudRate / 16 - 1);
-    BRG16   = 0;    //8-bit
-    BRGH    = 1;    //high speed
-    SYNC    = 0;    //asynchronous mode
-    SPEN    = 1;    //serial port enabled
-    TXEN    = 1;
-    CREN    = 1;
+    SPBRG = (unsigned char)(_XTAL_FREQ / desiredBaudRate / 16 - 1);
+    BRG16 = 0;    //8-bit
+    BRGH  = 1;    //high speed
+    SYNC  = 0;    //asynchronous mode
+    SPEN  = 1;    //serial port enabled
+    TXEN  = 1;
+    CREN  = 1;
     asm("CLRWDT");
+    uart_resetRx();
 }
 
 void uart_initTx(int desiredBaudRate) {
-    SPBRG   = (unsigned char)(_XTAL_FREQ / desiredBaudRate / 16 - 1);
-    BRG16   = 0;    //8-bit
-    BRGH    = 1;    //high speed
-    SYNC    = 0;    //asynchronous mode
-    SPEN    = 1;    //serial port enabled
-    TXEN    = 1;
+    SPBRG = (unsigned char)(_XTAL_FREQ / desiredBaudRate / 16 - 1);
+    BRG16 = 0;    //8-bit
+    BRGH  = 1;    //high speed
+    SYNC  = 0;    //asynchronous mode
+    SPEN  = 1;    //serial port enabled
+    TXEN  = 1;
     asm("CLRWDT");
+    uart_resetRx();
 }
 
 void uart_initRx(int desiredBaudRate) {
-    SPBRG   = (unsigned char)(_XTAL_FREQ / desiredBaudRate / 16 - 1);
-    BRG16   = 0;    //8-bit
-    BRGH    = 1;    //high speed
-    SYNC    = 0;    //asynchronous mode
-    SPEN    = 1;    //serial port enabled
-    CREN    = 1;
+    SPBRG = (unsigned char)(_XTAL_FREQ / desiredBaudRate / 16 - 1);
+    BRG16 = 0;    //8-bit
+    BRGH  = 1;    //high speed
+    SYNC  = 0;    //asynchronous mode
+    SPEN  = 1;    //serial port enabled
+    CREN  = 1;
     asm("CLRWDT");
+    uart_resetRx();
 }
 
 void uart_resetRx() {
