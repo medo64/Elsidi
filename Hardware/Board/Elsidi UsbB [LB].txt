@@ -18,10 +18,10 @@ PARTS
   - C1                                  FT232RL required
 
   o C 100nF, X7R (0805)                                                         DK:399-1170-1-ND
-  - C2                                  FT232RL required
+  - C2 C3                               FT232RL required
 
   o C 4.7uF, ceramic (0805)                                                     DK:587-1302-1-ND
-  - C3                                  FT232RL required
+  - C4                                  FT232RL required
 
   o DS LED red, 20mA (0805)                                                     DK:475-1415-1-ND
   - DS1                                 Activity
@@ -51,4 +51,5 @@ RECOMMENDED SOLDERING ORDER
     - L1
     - C3
     - R1
+    - C4
     - J1 J2
