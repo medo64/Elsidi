@@ -10,7 +10,7 @@ RATINGS
 
 BOARD
 
-  o Board size ...........: 20.00 x 72.00 mm (2.77 sqin)
+  o Board size ...........: 72.00 x 20.00 mm (2.77 sqin)
 
 
 PARTS                              
@@ -49,7 +49,7 @@ PARTS
   o R 220, 0.1W (0805)                                                          DK:RMCF0805FT220RCT-ND
   - R2                                  Gate
 
-  o R 1K, 0.1W (0805)                                                           DK:RMCF0805JT1K00CT-ND
+  o R 2K2, 0.1W (0805)                                                          DK:RMCF0805JT2K20CT-ND
   - R3                                  LED
   - R4                                  MOSFET pull-up
 
@@ -69,6 +69,9 @@ EXPLANATIONS
     that you will actually be using.
 
   o Backlight and contrast are controled via PWM.
+
+  o Value of R3 resistor is quite high in order to keep LED very dim. If higher
+    brightness is desired just swap it for 1K or something even lower.
 
 
 RECOMMENDED SOLDERING ORDER
