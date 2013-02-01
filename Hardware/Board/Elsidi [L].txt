@@ -22,7 +22,7 @@ PARTS
   - C3                                  Bulk
   - C4                                  Contrast
 
-  o C 100uF, Y5V (1206)                                                         DK:490-4512-1-ND
+  o C 47uF (1206)                                                               DK:399-5508-1-ND
   - C5                                  Low-pass filter (backlight)
 
   o DS LED, 20mA (0805)                                                         DK:475-1415-1-ND

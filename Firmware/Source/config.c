@@ -20,7 +20,7 @@ void init() {
     LATB = 0;
     LATC = 0;
 
-    PR2 = 0x3F; //62.5 kHz PWM / 8-bit
+    PR2 = 0x0F; //250 kHz PWM / 6-bit
 
     //backlight
     CCP1M3  = 1; //pwm mode (CCP2CON)

@@ -134,14 +134,14 @@ void lcd_writeData(unsigned char data) {
 
 
 void lcd_setContrastPwm(unsigned char percent) {
-    unsigned char value = (unsigned char)((100-percent) * 255 / 100);
+    unsigned char value = (unsigned char)((100-percent) * 255 / 100) / (63 / PR2);
     DC2B0 = (value & 0x1);
     DC2B1 = ((value >> 1) & 0x1);
     CCPR2L = (value >> 2);
 }
 
 void lcd_setBacklightPwm(unsigned char percent) {
-    unsigned char value = (unsigned char)((100-percent) * 255 / 100);
+    unsigned char value = (unsigned char)((100-percent) * 255 / 100) / (63 / PR2);
     DC1B0 = (value & 0x1);
     DC1B1 = ((value >> 1) & 0x1);
     CCPR1L = (value >> 2);
