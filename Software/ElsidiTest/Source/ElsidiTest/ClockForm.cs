@@ -1,6 +1,7 @@
 ﻿using Medo.Device;
 using System;
 using System.Drawing;
+using System.Threading;
 using System.Windows.Forms;
 
 namespace TestElsidi {
@@ -25,13 +26,15 @@ namespace TestElsidi {
             var time = DateTime.Now;
             var line1 = time.ToLongTimeString();
             var line2 = time.ToShortDateString();
-
-            this.Device.ReturnHome();
-            this.Device.SendText(line1 + "    ");
-            this.Device.NextLine();
-            this.Device.SendText(line2 + "    ");
-
             lblClock.Text = line1 + "\r\t" + line2;
+
+            ThreadPool.QueueUserWorkItem(delegate(Object state) {
+                var lines = (string[])state;
+                this.Device.ReturnHome();
+                this.Device.SendText(lines[0] + "    ");
+                this.Device.NextLine();
+                this.Device.SendText(lines[1] + "    ");
+            }, new string[] { line1, line2 });
         }
 
     }

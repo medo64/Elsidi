@@ -93,6 +93,11 @@ namespace TestElsidi {
             Debug.WriteLine(sw.ElapsedMilliseconds);
         }
 
+
+        private void btnInit_Click(object sender, EventArgs e) {
+            this.Device.SendTextCommand('~', "");
+        }
+
         private void btnAdjust_Click(object sender, EventArgs e) {
             using (var frm = new AdjustForm(this.Device)) {
                 frm.ShowDialog(this);
@@ -108,6 +113,7 @@ namespace TestElsidi {
                 btnSend.Enabled = true;
                 btnClock.Enabled = true;
                 btnStress.Enabled = true;
+                btnInit.Enabled = true;
                 btnAdjust.Enabled = true;
                 this.AcceptButton = null;
             } else {
@@ -117,6 +123,7 @@ namespace TestElsidi {
                 btnSend.Enabled = false;
                 btnClock.Enabled = false;
                 btnStress.Enabled = false;
+                btnInit.Enabled = false;
                 btnAdjust.Enabled = false;
                 this.AcceptButton = btnConnect;
             }
