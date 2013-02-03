@@ -55,6 +55,7 @@ bit uart_isDataAvailable() {
 }
 
 unsigned char uart_readByte() {
+    asm("CLRWDT");
     if (FERR) { uart_resetRx(); } //framing error
     if (OERR) { uart_resetRx(); } //overrun error
     while (RCIF == 0) { //wait until something is received
@@ -69,6 +70,7 @@ void uart_writeByte(unsigned char value) {
         asm("CLRWDT");
     }
     TXREG = value;
+    asm("CLRWDT");
 }
 
 void uart_writeBytes(unsigned char value[], short count) {
@@ -77,5 +79,6 @@ void uart_writeBytes(unsigned char value[], short count) {
             asm("CLRWDT");
         }
         TXREG = value[i];
+        asm("CLRWDT");
     }
 }

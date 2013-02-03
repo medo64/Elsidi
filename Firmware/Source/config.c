@@ -10,6 +10,13 @@ void init() {
     IRCF1 = 1;
     IRCF0 = 1;
 
+    WDTPS4 = 0; //1s watchdog (1:32768)
+    WDTPS3 = 1;
+    WDTPS2 = 0;
+    WDTPS1 = 1;
+    WDTPS0 = 0;
+    asm("CLRWDT");
+
     ANSELA = 0;
     ANSELB = 0;
     ANSELC = 0b00011000;

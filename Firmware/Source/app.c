@@ -18,6 +18,7 @@ void main() {
             __delay_ms(100);
             LED = 1;
             __delay_ms(100);
+            asm("CLRWDT");
         }
     }
 
@@ -27,6 +28,8 @@ void main() {
     lcd_init(settings_getInterface(), settings_getDeviceCount());
 
     int i = 0;
+
+    asm("CLRWDT");
     while (ELSIDI_NAME[i] != '\0') {
         lcd_writeData(ELSIDI_NAME[i]);
         i++;
@@ -41,7 +44,10 @@ void main() {
     lcd_setContrastPwm(settings_getContrast());
     lcd_setBacklightPwm(settings_getBacklight());
 
-    __delay_ms(1000);
+    for (int i=0; i<10; i++) {
+        asm("CLRWDT");
+        __delay_ms(100);
+    }
     lcd_reinit(settings_getInterface(), settings_getDeviceCount());
     LED = 0;
 
