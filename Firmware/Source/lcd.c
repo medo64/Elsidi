@@ -3,28 +3,18 @@
 #include "config.h"
 
 
-unsigned char SelectedE = 0x03;
+unsigned char SelectedE = 0x01;
 unsigned char DeviceCount = 1;
 unsigned char InterfaceWidth = 8;
 unsigned char DisplayState = 0;
 
 
 void pulseE() {
-    if (SelectedE == 0x03) {
-        LCD_E1 = 1;
-        LCD_E2 = 1;
-        __delay_us(5);
-        LCD_E1 = 0;
-        LCD_E2 = 0;
-    } else if (SelectedE == 0x02) {
-        LCD_E2 = 1;
-        __delay_us(5);
-        LCD_E2 = 0;
-    } else {
-        LCD_E1 = 1;
-        __delay_us(5);
-        LCD_E1 = 0;
-    }
+    if (SelectedE & 0x01) { LCD_E1 = 1; }
+    if (SelectedE & 0x02) { LCD_E2 = 1; }
+    __delay_us(5);
+    if (SelectedE & 0x01) { LCD_E1 = 0; }
+    if (SelectedE & 0x02) { LCD_E2 = 0; }
     __delay_us(20);
 }
 
@@ -105,19 +95,13 @@ void lcd_writeInstruction(unsigned char data) {
 }
 
 void lcd_clearDisplay() {
-    SelectedE = 0x03;
+    SelectedE = 0x03; //both displays are affected
     lcd_writeInstruction(0x01);
-    if (DeviceCount == 2) {
-        SelectedE = 0x01;
-    }
+    SelectedE = 0x01;
 }
 
 void lcd_returnHome() {
-    if (DeviceCount == 2) {
-        SelectedE = 0x01;
-    } else {
-        SelectedE = 0x03; //just keep both E lines in same state.
-    }
+    SelectedE = 0x01;
     lcd_writeInstruction(0x02);
 }
 
@@ -182,7 +166,7 @@ void lcd_initInterfaceWidth(unsigned char width) {
 }
 
 void lcd_reinit(unsigned char width, unsigned char deviceCount) {
-    SelectedE = 0x03;
+    SelectedE = 0x03; //both displays are affected
     lcd_initInstruction();      //Function set (0011 ****)
     __delay_ms(10);             //additional delay
     lcd_initInstruction();      //Function set (0011 ****) - it really needs to be set second time (of four)
@@ -204,11 +188,7 @@ void lcd_reinit(unsigned char width, unsigned char deviceCount) {
 
     CurrLine = 0;
     DeviceCount = deviceCount;
-    if (DeviceCount == 2) {
-        SelectedE = 0x01;
-    } else {
-        SelectedE = 0x03; //just keep both E lines in same state.
-    }
+    lcd_returnHome();
 }
 
 void lcd_init(unsigned char width, unsigned char deviceCount) {
