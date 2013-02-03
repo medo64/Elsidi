@@ -8,7 +8,6 @@ syntax: glob
 *.mcs
 *.o
 *.rar
-*.zip
 
 Firmware/Binaries/*
 Firmware/Source/build/*
