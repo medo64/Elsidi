@@ -4,30 +4,33 @@
 #include "config.h"
 
 
-#define DEFAULT_CONTRAST   50
-#define DEFAULT_BACKLIGHT   0
-#define DEFAULT_INTERFACE   8
-#define DEFAULT_DEVICECOUNT 1
+#define DEFAULT_CONTRAST  50
+#define DEFAULT_BACKLIGHT  0
+#define DEFAULT_WIDTH     20
+#define DEFAULT_HEIGHT     4
+#define DEFAULT_BUSWIDTH   8
 
-#define OFFSET_CONTRAST    0
-#define OFFSET_BACKLIGHT   1
-#define OFFSET_INTERFACE   2
-#define OFFSET_DEVICECOUNT 3
+#define OFFSET_CONTRAST   0
+#define OFFSET_BACKLIGHT  1
+#define OFFSET_WIDTH      2
+#define OFFSET_HEIGHT     3
+#define OFFSET_BUSWIDTH   4
 
-#define FLASH_RAW { DEFAULT_CONTRAST, DEFAULT_BACKLIGHT, DEFAULT_INTERFACE, DEFAULT_DEVICECOUNT, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 } //reserving space because erase block is block 32-word
+#define FLASH_RAW { DEFAULT_CONTRAST, DEFAULT_BACKLIGHT, DEFAULT_WIDTH, DEFAULT_HEIGHT, DEFAULT_BUSWIDTH, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 } //reserving space because erase block is block 32-word
 #define FLASH_RAW_LOCATION 0x1800
 #define FLASH_RAW_COUNT 32
 
-#define STORE_EMPTY { 0, 0, 0, 0 }
-#define STORE_COUNT 4
+#define STORE_EMPTY { 0, 0, 0, 0, 0 }
+#define STORE_COUNT 5
 
 const unsigned char FLASH[] @ FLASH_RAW_LOCATION = FLASH_RAW;
 
 
 unsigned char current_contrast = 0;
 unsigned char current_backlight = 0;
-unsigned char current_interface = 0;
-unsigned char current_deviceCount = 0;
+unsigned char current_width = 0;
+unsigned char current_height = 0;
+unsigned char current_busWidth = 0;
 
 
 void settings_write(int index, unsigned char data) {
@@ -81,10 +84,10 @@ void settings_write(int index, unsigned char data) {
 void settings_init() {
     current_contrast = FLASH[OFFSET_CONTRAST];
     current_backlight = FLASH[OFFSET_BACKLIGHT];
-    current_interface = FLASH[OFFSET_INTERFACE];
-    current_deviceCount = FLASH[OFFSET_DEVICECOUNT];
+    current_width = FLASH[OFFSET_WIDTH];
+    current_height = FLASH[OFFSET_HEIGHT];
+    current_busWidth = FLASH[OFFSET_BUSWIDTH];
 }
-
 
 unsigned char  settings_getContrast() {
     unsigned char value = current_contrast;
@@ -116,27 +119,49 @@ void settings_writeBacklight() {
 }
 
 
-unsigned char settings_getInterface() {
-    return (current_interface == 4) ? 4 : DEFAULT_INTERFACE;
+unsigned char settings_getWidth() {
+    return ((current_width == 0) || (current_width > 80)) ? DEFAULT_WIDTH : current_width;
 }
 
-void settings_setInterface(unsigned char value) {
-    current_interface = value;
+void settings_setWidth(unsigned char value) {
+    current_width = value;
 }
 
-void settings_writeInterface() {
-    settings_write(OFFSET_INTERFACE, current_interface);
+void settings_writeWidth() {
+    settings_write(OFFSET_WIDTH, current_width);
 }
 
 
-unsigned char settings_getDeviceCount() {
-    return (current_deviceCount == 2) ? 2 : DEFAULT_DEVICECOUNT;
+unsigned char settings_getHeight() {
+    return ((current_height == 0) || (current_height > 4)) ? DEFAULT_HEIGHT : current_height;
 }
 
-void settings_setDeviceCount(unsigned char value) {
-    current_deviceCount = value;
+void settings_setHeight(unsigned char value) {
+    current_height = value;
 }
 
-void settings_writeDeviceCount() {
-    settings_write(OFFSET_DEVICECOUNT, current_deviceCount);
+void settings_writeHeight() {
+    settings_write(OFFSET_HEIGHT, current_height);
+}
+
+
+unsigned char settings_getBusWidth() {
+    return (current_busWidth == 4) ? 4 : DEFAULT_BUSWIDTH;
+}
+
+void settings_setBusWidth(unsigned char value) {
+    current_busWidth = value;
+}
+
+void settings_writeBusWidth() {
+    settings_write(OFFSET_BUSWIDTH, current_busWidth);
+}
+
+
+void settings_writeDefaults() {
+    settings_write(OFFSET_BACKLIGHT, DEFAULT_BACKLIGHT);
+    settings_write(OFFSET_CONTRAST, DEFAULT_CONTRAST);
+    settings_write(OFFSET_WIDTH, DEFAULT_WIDTH);
+    settings_write(OFFSET_HEIGHT, DEFAULT_HEIGHT);
+    settings_write(OFFSET_BUSWIDTH, DEFAULT_BUSWIDTH);
 }

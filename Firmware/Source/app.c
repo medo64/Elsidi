@@ -25,7 +25,7 @@ void main() {
     settings_init();
     communication_init();
 
-    lcd_init(settings_getInterface(), settings_getDeviceCount());
+    lcd_init(settings_getBusWidth(), settings_getWidth(), settings_getHeight());
 
     int i = 0;
 
@@ -48,7 +48,7 @@ void main() {
         asm("CLRWDT");
         __delay_ms(100);
     }
-    lcd_reinit(settings_getInterface(), settings_getDeviceCount());
+    lcd_reinit(settings_getBusWidth(), settings_getWidth(), settings_getHeight());
     LED = 0;
 
     while (1) {

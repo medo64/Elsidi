@@ -194,7 +194,7 @@ void processByte(unsigned char data) {
                         settings_init();
                         lcd_setBacklightPwm(settings_getBacklight());
                         lcd_setContrastPwm(settings_getContrast());
-                        lcd_reinit(settings_getInterface(), settings_getDeviceCount());
+                        lcd_reinit(settings_getBusWidth(), settings_getWidth(), settings_getHeight());
                         data = SUCCESS;
                     }
                 } break;
@@ -286,49 +286,66 @@ void processByte(unsigned char data) {
                 } break;
 
                 case 'd':
-                case 'D': { //set number of devices (control of E1 and E2)
-                    unsigned char deviceCount = settings_getDeviceCount();
-                    unsigned char charCount;
-                    if (readSmallNumber(&deviceCount, &charCount)) {
-                        if (charCount == 0) { //report back
-                            writeNumber(deviceCount);
-                            data = SUCCESS;
-                        } else if (deviceCount == 1) {
-                            settings_setInterface(1);
-                            data = SUCCESS;
-                        } else if (deviceCount == 2) {
-                            settings_setDeviceCount(2);
-                            data = SUCCESS;
-                        }
-                        if (data == SUCCESS) {
-                            lcd_reinit(settings_getInterface(), settings_getDeviceCount());
-                            if (cmd == 'D') { settings_writeDeviceCount(); }
-                        }
-                    }
-                } break;
-
-
-                case 'i':
-                case 'I': { //set interface width
-                    unsigned char interface = settings_getInterface();
+                case 'D': { //set display bus width
+                    unsigned char interface = settings_getBusWidth();
                     unsigned char charCount;
                     if (readSmallNumber(&interface, &charCount)) {
                         if (charCount == 0) { //report back
                             writeNumber(interface);
                             data = SUCCESS;
                         } else if (interface == 4) {
-                            settings_setInterface(4);
+                            settings_setBusWidth(4);
                             data = SUCCESS;
                         } else if (interface == 8) {
-                            settings_setInterface(8);
+                            settings_setBusWidth(8);
                             data = SUCCESS;
                         }
                         if (data == SUCCESS) {
-                            lcd_reinit(settings_getInterface(), settings_getDeviceCount());
-                            if (cmd == 'I') { settings_writeInterface(); }
+                            lcd_reinit(settings_getBusWidth(), settings_getWidth(), settings_getHeight());
+                            if (cmd == 'D') { settings_writeBusWidth(); }
                         }
                     }
                 } break;
+
+                case 'h':
+                case 'H': { //set height of display
+                    unsigned char height = settings_getHeight();
+                    unsigned char charCount;
+                    if (readSmallNumber(&height, &charCount)) {
+                        if (charCount == 0) { //report back
+                            writeNumber(height);
+                            data = SUCCESS;
+                        } else if (height <= 4) {
+                            settings_setHeight(height);
+                            data = SUCCESS;
+                        }
+                        if (data == SUCCESS) {
+                            lcd_reinit(settings_getBusWidth(), settings_getWidth(), settings_getHeight());
+                            if (cmd == 'H') { settings_writeHeight(); }
+                        }
+                    }
+                } break;
+
+                case 'w':
+                case 'W': { //set width of display
+                    unsigned char width = settings_getWidth();
+                    unsigned char charCount;
+                    if (readSmallNumber(&width, &charCount)) {
+                        if (charCount == 0) { //report back
+                            writeNumber(width);
+                            data = SUCCESS;
+                        } else if (width <= 80) {
+                            settings_setWidth(width);
+                            data = SUCCESS;
+                        }
+                        if (data == SUCCESS) {
+                            lcd_reinit(settings_getBusWidth(), settings_getWidth(), settings_getHeight());
+                            if (cmd == 'W') { settings_writeWidth(); }
+                        }
+                    }
+                } break;
+
+
 
                 default: readNothing(); break;
             }

@@ -43,7 +43,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="%28Medo%29\Elsidi [006].cs" />
+    <Compile Include="%28Medo%29\Elsidi [007].cs" />
     <Compile Include="%28Medo%29\ErrorReport [019].cs" />
     <Compile Include="%28Medo%29\MessageBox [007].cs" />
     <Compile Include="%28Medo%29\Settings [012].cs" />

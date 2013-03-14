@@ -44,7 +44,7 @@
 
 const unsigned char ELSIDI_NAME[] = "Elsidi\0";
 const unsigned char ELSIDI_URL[] = "www.jmedved.com\0";
-const unsigned char ELSIDI_VERSION[] = "Elsidi L 2013-01-25\0";
+const unsigned char ELSIDI_VERSION[] = "Elsidi L 2013-03-13\0";
 
 
 void init();

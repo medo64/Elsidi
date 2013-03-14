@@ -25,16 +25,9 @@ bit isResetToDefaultsRequired() {
 
 
 void resetToDefaults() {
-    settings_setBacklight(1);
-    settings_writeBacklight();
-    settings_setContrast(50);
-    settings_writeContrast();
-    settings_setInterface(8);
-    settings_writeInterface();
-    settings_setDeviceCount(1);
-    settings_writeDeviceCount();
+    settings_writeDefaults();
 
-    lcd_init(4, 1); //we cannot use 8-bit interface since DB0 and DB1 are shorted!
+    lcd_init(4, settings_getWidth(), settings_getHeight()); //we cannot use 8-bit interface since DB0 and DB1 are shorted!
     lcd_writeData('D');
     lcd_writeData('E');
     lcd_writeData('F');
@@ -43,6 +36,7 @@ void resetToDefaults() {
     lcd_writeData('L');
     lcd_writeData('T');
     lcd_writeData('S');
+
     lcd_setBacklightPwm(settings_getBacklight());
     lcd_setContrastPwm(settings_getContrast());
 }

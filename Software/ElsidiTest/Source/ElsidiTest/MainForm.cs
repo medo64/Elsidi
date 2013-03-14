@@ -83,11 +83,18 @@ namespace TestElsidi {
             var sw = new Stopwatch();
             sw.Start();
             this.Device.ClearDisplay();
-            for (int i = 0; i < 128; i++) {
-                char ch = (char)('0' + i % 10);
+            int n;
+            for (int k = 0; k < 2; k++) { //overwrite two times
+                for (int j = 0; j < 4; j++) { //write four rows
+                    n = j + k * 2;
+                    for (int i = 0; i < 80; i++) { //write 80 characters in each row
+                        n = (n + 1) % 10;
+                        char ch = (char)('0' + n);
+                        this.Device.SendText(ch.ToString());
+                    }
+                    this.Device.NextLine();
+                }
                 this.Device.ReturnHome();
-                this.Device.ChangeDdramAddress(i);
-                this.Device.SendText(ch.ToString());
             }
             sw.Stop();
             Debug.WriteLine(sw.ElapsedMilliseconds);

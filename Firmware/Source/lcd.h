@@ -2,8 +2,8 @@
 #define LCD_H
 
 void lcd_clearDisplay();
-void lcd_init(unsigned char width, unsigned char deviceCount);
-void lcd_reinit(unsigned char width, unsigned char deviceCount);
+void lcd_init(unsigned char busWidth, unsigned char width, unsigned char height);
+void lcd_reinit(unsigned char busWidth, unsigned char width, unsigned char height);
 bit lcd_nextLine();
 void lcd_returnHome();
 void lcd_setAddress(unsigned char address);

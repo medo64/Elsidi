@@ -3,11 +3,13 @@
 #include "config.h"
 
 
-unsigned char SelectedE = 0x01;
+unsigned char BusWidth = 8;
+unsigned char Width = 20;
+unsigned char Height = 4;
 unsigned char DeviceCount = 1;
-unsigned char InterfaceWidth = 8;
+unsigned char RowsPerDevice = 4;
 unsigned char DisplayState = 0;
-
+unsigned char SelectedE = 0x01;
 
 void pulseE() {
     if (SelectedE & 0x01) { LCD_E1 = 1; }
@@ -19,7 +21,7 @@ void pulseE() {
 }
 
 void execute(unsigned char data) {
-    if (InterfaceWidth == 4) {
+    if (BusWidth == 4) {
         if (data & 0x80) { LCD_D7 = 1; } else { LCD_D7 = 0; }
         if (data & 0x40) { LCD_D6 = 1; } else { LCD_D6 = 0; }
         if (data & 0x20) { LCD_D5 = 1; } else { LCD_D5 = 0; }
@@ -48,33 +50,24 @@ char CurrLine = 0;
 
 bit lcd_nextLine() {
     CurrLine += 1;
-    if (CurrLine <= 3) {
-        if (DeviceCount == 2) {
-            switch (CurrLine) {
-                case 1:
-                    SelectedE = 0x01;
-                    lcd_setAddress(0x40);
-                    return 1;
-                case 2:
-                    SelectedE = 0x02;
-                    lcd_setAddress(0x00);
-                    return 1;
-                case 3:
-                    SelectedE = 0x02;
-                    lcd_setAddress(0x40);
-                    return 1;
-                default: return 0;
-            }
-        } else {
-            switch (CurrLine) {
-                case 1: lcd_setAddress(0x40); return 1;
-                case 2: lcd_setAddress(0x14); return 1;
-                case 3: lcd_setAddress(0x54); return 1;
-                default: return 0;
-            }
+    if (CurrLine < Height) {
+        unsigned char devIndex = CurrLine / RowsPerDevice;
+        switch (devIndex) {
+            case 0: SelectedE = 0x01; break;
+            case 1: SelectedE = 0x02; break;
+            default: return 0;
+        }
+
+        unsigned char rowIndex = (CurrLine / DeviceCount) + (CurrLine % DeviceCount) - devIndex;
+        switch (rowIndex) {
+            case 0: lcd_setAddress(0x00); return 1;
+            case 1: lcd_setAddress(0x40); return 1;
+            case 2: lcd_setAddress(0x14); return 1;
+            case 3: lcd_setAddress(0x54); return 1;
+            default: return 0;
         }
     } else {
-        CurrLine = 4; //just reset it to one line above highest and do nothing
+        CurrLine = Height; //just reset it to one line above highest and do nothing
         return 0;
     }
 }
@@ -162,10 +155,10 @@ void lcd_initInterfaceWidth(unsigned char width) {
     LCD_D1 = 0;
     LCD_D0 = 0;
     pulseE();
-    InterfaceWidth = width;
+    BusWidth = width;
 }
 
-void lcd_reinit(unsigned char width, unsigned char deviceCount) {
+void lcd_reinit(unsigned char busWidth, unsigned char width, unsigned char height) {
     SelectedE = 0x03; //both displays are affected
     lcd_initInstruction();      //Function set (0011 ****)
     __delay_ms(10);             //additional delay
@@ -174,7 +167,7 @@ void lcd_reinit(unsigned char width, unsigned char deviceCount) {
     lcd_initInstruction();      //Function set (0011 ****) - it really needs to be set third time (of four)
     __delay_ms(1);              //additional delay
     lcd_initInterfaceWidth(width);
-    if (width == 4) {
+    if (busWidth == 4) {
         lcd_writeInstruction(0x28); //Function set (0010 1000) set 4-bit operation, 2-line display and 5x8 font
     } else {
         lcd_writeInstruction(0x38); //Function set (0011 1000) set 8-bit operation, 2-line display and 5x8 font
@@ -186,14 +179,19 @@ void lcd_reinit(unsigned char width, unsigned char deviceCount) {
     lcd_writeInstruction(0x02); //Return home (0000 0010)
     lcd_writeInstruction(0x0C); //Display control (0000 1100) - turn on display
 
+    Width = width;
+    Height = height;
+
+    DeviceCount = ((Width-1) * Height - 1 + Width) / 128 + 1;
+    RowsPerDevice = Height / DeviceCount;
     CurrLine = 0;
-    DeviceCount = deviceCount;
+
     lcd_returnHome();
 }
 
-void lcd_init(unsigned char width, unsigned char deviceCount) {
+void lcd_init(unsigned char busWidth, unsigned char width, unsigned char height) {
     __delay_ms(50);
-    lcd_reinit(width, deviceCount);
+    lcd_reinit(busWidth, width, height);
 }
 
 
