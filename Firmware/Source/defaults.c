@@ -5,22 +5,23 @@
 #include "settings.h"
 
 
-bit isResetToDefaultsRequired() {
-    unsigned char isShorted = 1;
-
+bit checkJumperState(unsigned char state) {
+    LCD_D0 = 0; //set DB0=0
+    __delay_ms(1);
     LCD_D0_TRIS = 1; //make DB0 an input
-
-    LCD_D1 = 0;
     __delay_ms(1);
-    if (LCD_D0_PORT != 0) { isShorted = 0; }
-
-    LCD_D1 = 1;
+    LCD_D1 = state; //set DB1=(state)
     __delay_ms(1);
-    if (LCD_D0_PORT != 1) { isShorted = 0; }
+    unsigned char result = LCD_D0_PORT;
+    LCD_D0_TRIS = 0; //restore DB0 to output
+    return (result==state) ? 0 : 1;
+}
 
-    LCD_D0_TRIS = 0; //DB0 is output again
-
-    return isShorted;
+bit isResetToDefaultsRequired() {
+    for (char i=0; i<8; i++) {
+        if (!checkJumperState(1) || !checkJumperState(0)) { return  0; }
+    }
+    return 1;
 }
 
 
