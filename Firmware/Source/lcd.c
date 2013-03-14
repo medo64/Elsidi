@@ -118,10 +118,15 @@ void lcd_setContrastPwm(unsigned char percent) {
 }
 
 void lcd_setBacklightPwm(unsigned char percent) {
-    unsigned char value = (unsigned char)((100-percent) * 255 / 100) / (63 / PR2);
-    DC1B0 = (value & 0x1);
-    DC1B1 = ((value >> 1) & 0x1);
-    CCPR1L = (value >> 2);
+    if (percent == 0) {
+        LCD_BACKLIGHT_TRIS = 1; //backlight turned off completely
+    } else {
+        unsigned char value = (unsigned char)((100-percent) * 255 / 100) / (63 / PR2);
+        DC1B0 = (value & 0x1);
+        DC1B1 = ((value >> 1) & 0x1);
+        CCPR1L = (value >> 2);
+        LCD_BACKLIGHT_TRIS = 0; //turn backlight on
+    }
 }
 
 void lcd_useE(unsigned char mask) {

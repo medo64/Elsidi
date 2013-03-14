@@ -54,6 +54,6 @@ void init() {
     TMR2ON  = 1; //enable timer
     while (!TMR2IF); //wait until timer overflows (to start at complete duty cycle)
 
-    TRISC1 = 0; //turn on contrast
-    TRISC2 = 0; //turn on backlight
+    LCD_CONTRAST_TRIS = 0; //turn on contrast
+    LCD_BACKLIGHT_TRIS = 1; //keep backlight turned off
 }

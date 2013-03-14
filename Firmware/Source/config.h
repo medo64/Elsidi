@@ -39,6 +39,9 @@
 #define LCD_D0_TRIS TRISA0
 #define LCD_D0_PORT PORTAbits.RA0
 
+#define LCD_CONTRAST_TRIS TRISC1
+#define LCD_BACKLIGHT_TRIS TRISC2
+
 #define LED    LATA7
 
 
