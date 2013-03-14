@@ -11,6 +11,7 @@ void lcd_setBacklightPwm(unsigned char percent);
 void lcd_setContrastPwm(unsigned char percent);
 void lcd_useE(unsigned char mask);
 void lcd_writeData(unsigned char data);
+void lcd_writeNumber(unsigned char data);
 void lcd_writeInstruction(unsigned char data);
 
 bit lcd_isDisplayOn();

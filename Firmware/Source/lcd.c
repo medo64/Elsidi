@@ -109,6 +109,19 @@ void lcd_writeData(unsigned char data) {
     execute(data);
 }
 
+void lcd_writeNumber(unsigned char value) {
+    unsigned char d2 = value / 100;
+    unsigned char d1 = (value / 10) % 10;
+    unsigned char d0 = value % 10;
+    if (d2 != 0) {
+        lcd_writeData(0x30 + d2);
+        lcd_writeData(0x30 + d1);
+    } else if ((d2 == 0) && (d1 != 0)) {
+        lcd_writeData(0x30 + d1);
+    }
+    lcd_writeData(0x30 + d0);
+}
+
 
 void lcd_setContrastPwm(unsigned char percent) {
     unsigned char value = (unsigned char)((100-percent) * 255 / 100) / (63 / PR2);
@@ -148,19 +161,19 @@ void lcd_initInstruction() {
     pulseE();
 }
 
-void lcd_initInterfaceWidth(unsigned char width) {
+void lcd_initInterfaceWidth(unsigned char busWidth) {
     LCD_RS = 0;
     LCD_RW = 0;
     LCD_D7 = 0;
     LCD_D6 = 0;
     LCD_D5 = 1;
-    LCD_D4 = (width == 4) ? 0 : 1;
+    LCD_D4 = (busWidth == 4) ? 0 : 1;
     LCD_D3 = 0;
     LCD_D2 = 0;
     LCD_D1 = 0;
     LCD_D0 = 0;
     pulseE();
-    BusWidth = width;
+    BusWidth = busWidth;
 }
 
 void lcd_reinit(unsigned char busWidth, unsigned char width, unsigned char height) {
@@ -171,7 +184,7 @@ void lcd_reinit(unsigned char busWidth, unsigned char width, unsigned char heigh
     __delay_ms(1);              //additional delay
     lcd_initInstruction();      //Function set (0011 ****) - it really needs to be set third time (of four)
     __delay_ms(1);              //additional delay
-    lcd_initInterfaceWidth(width);
+    lcd_initInterfaceWidth(busWidth);
     if (busWidth == 4) {
         lcd_writeInstruction(0x28); //Function set (0010 1000) set 4-bit operation, 2-line display and 5x8 font
     } else {

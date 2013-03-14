@@ -37,6 +37,19 @@ void resetToDefaults() {
     lcd_writeData('L');
     lcd_writeData('T');
     lcd_writeData('S');
+    lcd_nextLine();
+    lcd_writeNumber(settings_getWidth());
+    lcd_writeData('x');
+    lcd_writeNumber(settings_getHeight());
+    lcd_writeData(' ');
+    lcd_writeData('B');
+    lcd_writeNumber(settings_getBacklight());
+    lcd_writeData(' ');
+    lcd_writeData('C');
+    lcd_writeNumber(settings_getContrast());
+    lcd_writeData(' ');
+    lcd_writeData('D');
+    lcd_writeNumber(settings_getBusWidth());
 
     lcd_setBacklightPwm(settings_getBacklight());
     lcd_setContrastPwm(settings_getContrast());
