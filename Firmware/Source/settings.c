@@ -159,8 +159,13 @@ void settings_writeBusWidth() {
 
 
 void settings_writeDefaults() {
-    settings_write(OFFSET_BACKLIGHT, DEFAULT_BACKLIGHT);
+    current_contrast = DEFAULT_CONTRAST;
+    current_backlight = DEFAULT_BACKLIGHT;
+    current_width = DEFAULT_WIDTH;
+    current_height = DEFAULT_HEIGHT;
+    current_busWidth = DEFAULT_BUSWIDTH;
     settings_write(OFFSET_CONTRAST, DEFAULT_CONTRAST);
+    settings_write(OFFSET_BACKLIGHT, DEFAULT_BACKLIGHT);
     settings_write(OFFSET_WIDTH, DEFAULT_WIDTH);
     settings_write(OFFSET_HEIGHT, DEFAULT_HEIGHT);
     settings_write(OFFSET_BUSWIDTH, DEFAULT_BUSWIDTH);
