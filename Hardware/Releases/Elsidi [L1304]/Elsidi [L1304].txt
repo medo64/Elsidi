@@ -1,0 +1,88 @@
+                                     Elsidi
+
+
+RATINGS
+
+  o Input voltage .............: 5 V
+  o Input current .............: 20 mA
+  o LCD backlight current (max): 450 mA
+
+
+BOARD
+
+  o Board size ...........: 72.00 x 20.00 mm (2.77 sqin)
+
+
+PARTS                              
+
+  o C 100nF, X7R (0805)                                                         DK:399-1170-1-ND
+  - C1 C2                               Decoupling
+
+  o C 4.7uF, ceramic (0805)                                                     DK:587-1302-1-ND
+  - C3                                  Bulk
+  - C4                                  Contrast
+
+  o C 100uF, Y5V (1206)                                                         DK:490-4512-1-ND
+  - C5                                  Low-pass filter (backlight)
+
+  o DS LED, 20mA (0805)                                                         DK:475-1415-1-ND
+  - DS1                                 Activity
+
+  o J Header, 4w, right, unshrouded                                             DK:609-3319-ND
+  - J1                                  5V TTL UART/I2C
+
+  o J Header, 16w, unshrouded                                                   DK:609-3287-ND
+  - J2a                                 LCD connector
+
+  o J Header, 2x8w, unshrouded                                                  DK:609-3220-ND
+  - J2b                                 LCD connector
+
+  o J Header, 2x8w, unshrouded                                                  DK:S2012EC-09-ND
+  - J2c                                 LCD connector
+
+  o Q DMP2215L-7 (SOT23-3)                                                      DK:DMP2215LDICT-ND
+  - Q1                                  Backlight PWM
+
+  o R 2.2, 5%, 1W (2512)                                                        DK:A102519CT-ND
+  - R1                                  Low-pass filter (backlight)
+
+  o R 220, 0.1W (0805)                                                          DK:RMCF0805FT220RCT-ND
+  - R2                                  Gate
+
+  o R 2K2, 0.1W (0805)                                                          DK:RMCF0805JT2K20CT-ND
+  - R3                                  LED
+  - R4                                  MOSFET pull-up
+
+  o U PIC16F1516 (SSOP-28)                                                      DK:PIC16F1516-I/SS-ND
+  - U1
+
+
+EXPLANATIONS
+
+  o This board supports 5V TTL UART connection. Pin order is [GND 5V RX TX] as
+    viewed from board side.
+
+  o If mode is changed to I2C than pins are [GND 5V SDA SCL].
+
+  o This board features three display connectors. Idea is to allow for easier
+    soldering. Since connectors do overlap, you should only solder connector
+    that you will actually be using.
+
+  o Backlight and contrast are controled via PWM.
+
+  o Value of R3 resistor is quite high in order to keep LED very dim. If higher
+    brightness is desired just swap it for 1K or something even lower.
+
+
+RECOMMENDED SOLDERING ORDER
+
+  o Top
+    - U1
+    - Q1
+    - C1 C2 C3 C4 C5
+    - DS1
+    - R1 R2 R3 R4
+    - J1
+
+  o Bottom
+    - J2a/J2b/J2c
